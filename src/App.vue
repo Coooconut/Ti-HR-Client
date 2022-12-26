@@ -4,88 +4,72 @@ import HelloWorld from "./components/HelloWorld.vue";
 </script>
 
 <template>
-  <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <h4 class="navbar-brand" href="#">Ti 專業人資系統</h4>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
     </div>
+  </nav>
+  <!-- Header -->
+  <header>
+    <h4>XXX，你好。今天也是個美好的一天。</h4>
+    <h4>你的打卡狀態：未打卡</h4>
   </header>
-
-  <RouterView />
+  <!-- 登入表單 -->
+  <form>
+    <div class="mb-3">
+      <label for="employee-code" class="form-label">員工編號</label>
+      <input
+        type="text"
+        name="employee-code"
+        class="form-control"
+        id="employee-code"
+        placeholder="Enter your employee code."
+      />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">密碼</label>
+      <input
+        type="password"
+        name="password"
+        class="form-control"
+        id="password"
+        placeholder="Enter your password."
+      />
+    </div>
+    <span>登入系統</span>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+<style></style>
