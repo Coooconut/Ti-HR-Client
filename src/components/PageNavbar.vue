@@ -19,7 +19,9 @@
             <a class="nav-link active" aria-current="page" href="#">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#" @click.prevent="toggleSignInForm"
+              >登入系統</a
+            >
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -37,7 +39,21 @@
 </template>
 
 <script>
+// 利用 mapStores 插件將 store 融入元件
+import { mapStores } from "pinia";
+import useFormStore from "@/stores/form";
+
 export default {
   name: "PageNavbar",
+  computed: {
+    // mapStores 需搭配展開運算子，引數代入 store。
+    ...mapStores(useFormStore),
+  },
+  methods: {
+    toggleSignInForm() {
+      // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
+      this.formStore.isOpen = !this.formStore.isOpen;
+    },
+  }
 };
 </script>
