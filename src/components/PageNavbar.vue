@@ -35,3 +35,9 @@
     </div>
   </nav>
 </template>
+
+<script>
+export default {
+  name: "PageNavbar",
+};
+</script>
