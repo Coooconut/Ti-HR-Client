@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ti-HR</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <h4 class="navbar-brand" href="#">Ti 專業人資系統</h4>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              Search
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <!-- Header -->
+    <header>
+      <h4>XXX，你好。今天也是個美好的一天。</h4>
+      <h4>你的打卡狀態：未打卡</h4>
+    </header>
+    <!-- 登入表單 -->
+    <form>
+      <div class="mb-3">
+        <label for="employee-code" class="form-label">員工編號</label>
+        <input
+          type="text"
+          name="employee-code"
+          class="form-control"
+          id="employee-code"
+          placeholder="Enter your employee code."
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">密碼</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          id="password"
+          placeholder="Enter your password."
+        />
+      </div>
+      <span>登入系統</span>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <!-- QR Code Test -->
+    <img alt="Google" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOQSURBVO3BQY5jhxUEwcwH3v/K5VkYcK0+QJDdkqyKMH8w81/HTDlmyjFTjplyzJRjphwz5Zgpx0w5ZsoxU46ZcsyUY6YcM+XFh1R+UxLeodKS8E0qLQlN5Tcl4RPHTDlmyjFTXnxZEr5J5SeptCQ0lSdJeEcSvknlm46ZcsyUY6a8+GEq70jCO1RaEp6otCR8QqUl4R0q70jCTzpmyjFTjpny4v9cEppKU3mShH+TY6YcM+WYKS/+z6k8SUJTeYdKS8I/2TFTjplyzJQXPywJf6UkPFF5ovKTkvB3csyUY6YcM+XFl6n8nai0JDxJQlNpSWgq71D5OztmyjFTjpny4kNJ+DtLwieS8Ikk/JMcM+WYKcdMMX/wAZWWhKbyTUl4ovKbkvBE5ZuS8JOOmXLMlGOmvPhQEppKS8I3qTxJwhOVloRPqDxJQlNpSXiHSkvCNx0z5Zgpx0x58SGVJyrvSEJT+U0qLQlN5R0qT1SeJOGJSkvCJ46ZcsyUY6a8+FASmsqTJDSVptKS0FR+UhKaSktCU3mShKbSkvCOJDSVbzpmyjFTjpny4ocl4R1JaCotCU2lqbxD5RNJaCpN5YlKS0JT+U3HTDlmyjFTXnxIpSXhicoTlZaETyThHSotCU9UniShqbQkNJWWhKbSkvBNx0w5ZsoxU8wffEClJaGpPElCU5n/SUJTeZKETxwz5Zgpx0x58cOS0FTekYSm8iQJTeVJEp6otCQ0lSdJaCpPkvAkCU3lm46ZcsyUY6a8+GVJeJKEpvIOlZaEpvJE5ZtUPqHSktCS8E3HTDlmyjFTzB/8g6m0JDSVloSm8iQJTeVJEt6h8iQJv+mYKcdMOWbKiw+p/KYktCQ0lZaEJ0l4otKS0FSeqLQkPElCU3lHEj5xzJRjphwz5cWXJeGbVJ6otCQ0lZaEptKS8E1JeIdKS0JTaUn4pmOmHDPlmCkvfpjKO5LwCZVPqLQkNJUnKp9IQlN5otKS8Iljphwz5ZgpL/7lktBUniShqbQkNJWWhKbSVP5Kx0w5ZsoxU178y6i8Q6UloSXhSRKeJKGpPElCU/mmY6YcM+WYKS9+WBJ+UhKaSktCU2lJeKLSVN6RhKbyjiT8pmOmHDPlmCkvvkzlN6m0JDSVJyotCS0JfyWV33TMlGOmHDPF/MHMfx0z5Zgpx0w5ZsoxU46ZcsyUY6YcM+WYKcdMOWbKMVOOmXLMlP8AK3+DOncTJ/cAAAAASUVORK5CYII=">
+    <img alt="Railway-root" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAYAAAB1PADUAAAAAklEQVR4AewaftIAAAUISURBVO3BQY4bSRAEwfAC//9l3znmqYBGJ7UaIczwR6qWnFQtOqladFK16KRq0UnVopOqRSdVi06qFp1ULTqpWnRSteikatFJ1aKTqkUnVYs+eQnIn6TmDSA3aiYgk5ongNyouQHyJ6l546Rq0UnVopOqRZ8sU7MJyA2QSc0EZFIzAZmATGqeADKpmYBMQCY1N2o2Adl0UrXopGrRSdWiT74MyBNqnlAzAZnUTEAmNU8AmdRMap5Q8waQJ9R800nVopOqRSdViz75xwGZ1NwAmdRMaiYgk5oJyA2QSc1vdlK16KRq0UnVok9+OSCTmgnIDZBNQCY1E5BJzb/kpGrRSdWik6pFn3yZmm9Ss0nNBORvpuZvclK16KRq0UnVok+WAfmTgExqvknNBGRSMwGZ1ExAJjU3QP5mJ1WLTqoWnVQtwh/5hwCZ1NwAmdTcAJnUTEDeUPObnVQtOqladFK16JOXgExqJiCTmgnIpGYCMql5A8ik5gk1E5D/E5BJzQ2QSc2mk6pFJ1WLTqoW4Y8sAjKpmYA8oWYCMqmZgNyouQEyqZmA3Kh5AsikZgIyqbkBMqm5ATKpeeOkatFJ1aKTqkX4I18EZJOaN4DcqJmAvKHmDSCTmgnIpGYC8oSaN06qFp1ULTqpWoQ/8hcBMqm5ATKpeQLIE2omIDdqJiCTmgnIG2pugExqNp1ULTqpWnRStQh/5AUgk5pNQCY1N0AmNROQGzUTkBs1E5BJzQTkRs0EZFJzA2RSMwG5UfPGSdWik6pFJ1WLPvmfAZnUTGr+JWomIBOQb1IzAdl0UrXopGrRSdUi/JFFQG7U3AC5UTMBeULNDZBJzRtAJjU3QCY1E5An1ExAbtS8cVK16KRq0UnVok++TM0NkBs1E5An1Dyh5gbIpGYCcgNkUnMDZFIzAXlDzaaTqkUnVYtOqhbhj3wRkEnNDZAbNROQSc0E5EbNG0Bu1NwAeULNDZBJzQTkRs0bJ1WLTqoWnVQtwh/5RYBMap4AMqmZgExqJiBvqJmATGomIDdqJiA3aiYgk5o3TqoWnVQtOqla9MlLQCY1E5BJzQ2QJ4BMam7UTEAmNROQJ9RMQJ4A8gSQSc0NkG86qVp0UrXopGoR/sgiIJOaCciNmhsgk5ongLyhZgJyo2YTkCfUTEAmNZtOqhadVC06qVr0yUtAJjVPqLkBMqmZgExqJiCTmieATEAmNROQJ4BsUnOj5ptOqhadVC06qVr0yUtqnlDzhJongNwAmdR8E5BJzY2aJ4DcAHlCzRsnVYtOqhadVC365CUgf5KaSc0EZFIzAbkBMql5Qs0EZALyBJBJzQ2QSc0E5JtOqhadVC06qVr0yTI1m4D8SWpugExqJiCTmhsgN2o2qfmmk6pFJ1WLTqoWffJlQJ5Q8wSQJ9S8oWYCcgNkUnMD5A01N0AmNZtOqhadVC06qVr0yS+n5gkgN2pugNyouQFyo+YGyBNAJjXfdFK16KRq0UnVok9+OSCTmgnIpGYCcgPkCSCTmhs1E5BJzRNAJjU3QCY1b5xULTqpWnRSteiTL1PzTWo2AZnU3AC5AXID5A01TwCZ1Gw6qVp0UrXopGrRJ8uA/ElANqm5AXKjZgIyqZmATGomIDdAbtTcAJnUvHFSteikatFJ1SL8kaolJ1WLTqoWnVQtOqladFK16KRq0UnVopOqRSdVi06qFp1ULTqpWnRSteikatFJ1aL/AAw0ZD4YqJtrAAAAAElFTkSuQmCC" >
+    <img alt="Railway-Sign-In" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAYAAAB1PADUAAAAAklEQVR4AewaftIAAAUTSURBVO3BQY4kNhLAQFLo/3+ZO8c8CSiUerw2MsL+YK1HDms9dFjrocNaDx3Weuiw1kOHtR46rPXQYa2HDms9dFjrocNaDx3Weuiw1kOHtR46rPXQD19S+ZsqblRuKm5UPlFxo3JTcaPyN1V847DWQ4e1Hjqs9dAPj1W8pHKjclNxozJVTCo3KjcVk8qkMlXcVLyk8tJhrYcOaz10WOuhH36ZyicqPlExqdyovFTxjYpvqHyi4jcd1nrosNZDh7Ue+uE/TuWfpHKjMlX8mx3Weuiw1kOHtR764V9O5aZiUrlR+YbKVDGpTBX/JYe1Hjqs9dBhrYd++GUVv6liUplUvlExqUwq/6SK/yeHtR46rPXQYa2HfnhM5W9SmSomlaliUpkqJpWpYlKZKiaVqWJSmSpuVP6fHdZ66LDWQ4e1HrI/+A9RmSo+ofKJiknlGxX/Zoe1Hjqs9dBhrYd++JLKVDGpTBWTylQxqUwVNxWTylTxiYpJZVL5J6lMFTcqU8VLh7UeOqz10GGth+wPvqDyiYoblaniRuWlik+oTBWfUJkqJpWp4kZlqrhRmSq+cVjrocNaDx3WeuiHxypuVKaKG5Wp4qZiUpkqblSmipuKSWWquKn4hspUMan8TYe1Hjqs9dBhrYd+eExlqpgqJpWbipuKSWWqmFT+SSpTxaRyo/KJikllqnjpsNZDh7UeOqz10A9fqphUJpWp4hMqNxU3Kp+omFSmipdUpopJZaq4UZkqblSmim8c1nrosNZDh7Ue+uFLKlPFjconKj5RMalMFZ+ouFH5RMWkMqn8popJ5aXDWg8d1nrosNZDP/wylaniRmVSmSomlZuKT6hMFTcVNypTxVQxqUwVk8o3VH7TYa2HDms9dFjroR++VDGpTBWTyk3FNyomlanipuITKp9QmSpuVKaKSeUbFS8d1nrosNZDh7Ue+uGxikllqphUJpWbiqniGypTxY3KJypuVL5RMal8QmWq+MZhrYcOaz10WOuhHx5T+UbFN1RuVG5Upoqp4kZlUpkqbiomlUllqrhRmSomlZcOaz10WOuhw1oP/fAllaliUrmpuFGZKiaVqWJS+UTFpDJV3FRMKp9Q+YTKVHGj8psOaz10WOuhw1oP2R88pDJV3KjcVHxDZaq4UflExaQyVbyk8omKSWWqeOmw1kOHtR46rPWQ/cEXVKaKSeWm4kZlqphUpopJ5abiRuUbFTcqL1X8kw5rPXRY66HDWg/98KWKm4pvVHxCZaq4UZkqbiomlRuVqeKm4hMqNyqfqPjGYa2HDms9dFjroR++pPI3VUwVn1C5UZkqPlExqUwqn1CZKm5UpopJ5Tcd1nrosNZDh7Ue+uGxipdUPqHyiYpPqEwVk8pUcaNyU/FSxaTy0mGthw5rPXRY66EffpnKJyo+oXJTMalMKlPFTcUnVKaKG5VvVNyo/KbDWg8d1nrosNZDP/zLVUwqf5PKVHGjclNxo/IJlb/psNZDh7UeOqz10A//cirfqJhUpoqbikllqripmFSmik+oTBU3Ki8d1nrosNZDh7Ue+uGXVfymihuVT1TcqEwVNyo3Kt+o+ITKVPHSYa2HDms9dFjroR8eU/mbVKaKm4oblaliqphUbipuVKaKSeVG5abiRmWq+MZhrYcOaz10WOsh+4O1Hjms9dBhrYcOaz10WOuhw1oPHdZ66LDWQ4e1Hjqs9dBhrYcOaz10WOuhw1oPHdZ66LDWQ/8DK11Tcx27o5kAAAAASUVORK5CYII=">
+  </body>
+</html>
