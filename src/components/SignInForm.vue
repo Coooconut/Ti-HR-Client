@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form :class="hiddenClass">
     <div class="mb-3">
       <label for="employee-code" class="form-label">員工編號</label>
       <input
@@ -26,7 +26,14 @@
 </template>
 
 <script>
+import { mapState } from "pinia";
+import useFormStore from "@/stores/form";
+
 export default {
   name: "SignInForm",
+  computed: {
+    // 代入 store 以及 getters，如此兩者可在任意元件中使用
+    ...mapState(useFormStore, ["hiddenClass"]),
+  },
 };
 </script>

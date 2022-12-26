@@ -54,6 +54,6 @@ export default {
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
       this.formStore.isOpen = !this.formStore.isOpen;
     },
-  }
+  },
 };
 </script>
