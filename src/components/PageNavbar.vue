@@ -63,10 +63,12 @@ import useFormStore from "@/stores/form";
 
 export default {
   name: "PageNavbar",
+  props: ["token"],
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useFormStore),
   },
+  emits: ["emit-post-punch"],
   methods: {
     toggleChangePasswordForm() {
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
@@ -78,19 +80,17 @@ export default {
       this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
     },
     postPunch() {
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiY29kZSI6IlQwMjIwMDAxIiwiaWRlbnRpdHkiOiJhZG1pbiIsImZ1bGxOYW1lIjoi546L5bCP5piOIiwidHlwb0NvdW50IjowLCJpYXQiOjE2NzIwMjI5NzAsImV4cCI6MTY3MjEwNTc3MH0.BH5tc_bOY6KUIiUzjfmv-v8TBh_UFs71Vstx0RLlALE";
       fetch("http://localhost:8000/api/punches", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
         .then((res) => {
           return res.json();
         })
-        .then((user) => {
-          this.user = user;
+        .then((res) => {
+          this.$emit("emit-post-punch", res);
         })
         .catch((err) => {
           console.error(err);

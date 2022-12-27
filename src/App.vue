@@ -1,5 +1,5 @@
 <template>
-  <page-navbar />
+  <page-navbar :token="token" @emit-post-punch="postPunch"></page-navbar>
   <!-- Header -->
   <header>
     <h4>XXX，你好。今天也是個美好的一天。</h4>
@@ -38,6 +38,10 @@ export default {
   },
   methods: {
     changePassword(res) {
+      this.message = res.message;
+      this.response = res;
+    },
+    postPunch(res) {
       this.message = res.message;
       this.response = res;
     },
