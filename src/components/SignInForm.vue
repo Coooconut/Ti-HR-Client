@@ -1,5 +1,9 @@
 <template>
-  <vee-form :class="hiddenClass" v-bind:validation-schema="schema">
+  <vee-form
+    :class="hiddenClass"
+    v-bind:validation-schema="schema"
+    v-on:submit="signIn"
+  >
     <!-- 員工編號 -->
     <div class="mb-3">
       <label for="employee_code" class="form-label">員工編號</label>
@@ -43,6 +47,11 @@ export default {
         password: "required",
       },
     };
+  },
+  methods: {
+    signIn(values) {
+      console.log(values);
+    },
   },
   computed: {
     // 代入 store 以及 getters，如此兩者可在任意元件中使用
