@@ -18,16 +18,28 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#">Home</a>
           </li>
+          <!-- 登入系統 -->
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="toggleSignInForm"
               >登入系統</a
             >
           </li>
+          <!-- 按鈕打卡 -->
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="postPunch">按鈕打卡</a>
           </li>
+          <!-- 二維條碼打卡 -->
           <li class="nav-item">
             <a class="nav-link" href="#">二維條碼打卡</a>
+          </li>
+          <!-- 更改密碼 -->
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              @click.prevent="toggleChangePasswordForm"
+              >更改密碼</a
+            >
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -56,9 +68,14 @@ export default {
     ...mapStores(useFormStore),
   },
   methods: {
+    toggleChangePasswordForm() {
+      // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
+      this.formStore.isOpenChangePasswordForm =
+        !this.formStore.isOpenChangePasswordForm;
+    },
     toggleSignInForm() {
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
-      this.formStore.isOpen = !this.formStore.isOpen;
+      this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
     },
     postPunch() {
       const token =

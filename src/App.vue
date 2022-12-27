@@ -9,7 +9,10 @@
   <h6>token: {{ token }}</h6>
   <h6>App.vue.response: {{ response }}</h6>
   <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
-  <change-password-form></change-password-form>
+  <change-password-form
+    :token="token"
+    @emit-change-password="changePassword"
+  ></change-password-form>
 </template>
 
 <script>
@@ -34,6 +37,10 @@ export default {
     };
   },
   methods: {
+    changePassword(res) {
+      this.message = res.message;
+      this.response = res;
+    },
     signIn(res) {
       this.message = res.message;
       this.response = res;

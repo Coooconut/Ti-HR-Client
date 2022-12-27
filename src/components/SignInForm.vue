@@ -1,6 +1,6 @@
 <template>
   <vee-form
-    :class="hiddenClass"
+    :class="hiddenClassSignInForm"
     v-bind:validation-schema="schema"
     v-on:submit="signIn"
   >
@@ -64,7 +64,7 @@ export default {
         })
         .then((res) => {
           this.$emit("emit-sign-in", res);
-          this.formStore.isOpen = !this.formStore.isOpen;
+          this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
         })
         .catch((err) => {
           console.error(err);
@@ -75,7 +75,7 @@ export default {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useFormStore),
     // 代入 store 以及 getters，如此兩者可在任意元件中使用
-    ...mapState(useFormStore, ["hiddenClass"]),
+    ...mapState(useFormStore, ["hiddenClassSignInForm"]),
   },
 };
 </script>
