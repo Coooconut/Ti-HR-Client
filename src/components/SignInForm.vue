@@ -34,11 +34,12 @@
 </template>
 
 <script>
-import { mapState } from "pinia";
+import { mapState, mapStores } from "pinia";
 import useFormStore from "@/stores/form";
 
 export default {
   name: "SignInForm",
+  props: ["response"],
   data() {
     return {
       // 資料驗證的 schema
@@ -48,12 +49,31 @@ export default {
       },
     };
   },
+  emits: ["emit-sign-in"],
   methods: {
     signIn(values) {
-      console.log(values);
+      fetch("http://localhost:8000/api/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+        body: `employeeCode=${values.employee_code}&password=${values.password}`,
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          this.$emit("emit-sign-in", res);
+          this.formStore.isOpen = !this.formStore.isOpen;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
   computed: {
+    // mapStores 需搭配展開運算子，引數代入 store。
+    ...mapStores(useFormStore),
     // 代入 store 以及 getters，如此兩者可在任意元件中使用
     ...mapState(useFormStore, ["hiddenClass"]),
   },
