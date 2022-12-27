@@ -5,6 +5,7 @@
     <h4>XXX，你好。今天也是個美好的一天。</h4>
     <h4>你的打卡狀態：未打卡</h4>
   </header>
+  <h1>{{ hint }}</h1>
   <sign-in-form />
 </template>
 
@@ -18,6 +19,11 @@ export default {
   components: {
     PageNavbar,
     SignInForm,
+  },
+  data() {
+    return {
+      hint: "提示訊息",
+    };
   },
 };
 </script>

@@ -23,6 +23,12 @@
               >登入系統</a
             >
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" @click.prevent="postPunch">按鈕打卡</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">二維條碼打卡</a>
+          </li>
         </ul>
         <form class="d-flex" role="search">
           <input
@@ -53,6 +59,25 @@ export default {
     toggleSignInForm() {
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
       this.formStore.isOpen = !this.formStore.isOpen;
+    },
+    postPunch() {
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiY29kZSI6IlQwMjIwMDAxIiwiaWRlbnRpdHkiOiJhZG1pbiIsImZ1bGxOYW1lIjoi546L5bCP5piOIiwidHlwb0NvdW50IjowLCJpYXQiOjE2NzIwMjI5NzAsImV4cCI6MTY3MjEwNTc3MH0.BH5tc_bOY6KUIiUzjfmv-v8TBh_UFs71Vstx0RLlALE";
+      fetch("http://localhost:8000/api/punches", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((user) => {
+          this.user = user;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };
