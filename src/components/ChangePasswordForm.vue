@@ -65,7 +65,6 @@ export default {
   emits: ["emit-change-password"],
   methods: {
     changPassword(values) {
-      console.log(values);
       fetch("http://localhost:8000/api/employees/password", {
         method: "PUT",
         headers: {
