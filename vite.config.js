@@ -11,4 +11,8 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  // 引用 @fawmi/vue-google-maps 前需添加下列設定
+  optimizeDeps: {
+    include: ["@fawmi/vue-google-maps", "fast-deep-equal"],
+  },
 });

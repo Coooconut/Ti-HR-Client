@@ -9,6 +9,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@fawmi/vue-google-maps": "^0.9.79",
     "@vee-validate/rules": "^4.7.3",
     "pinia": "^2.0.28",
     "vee-validate": "^4.7.3",
