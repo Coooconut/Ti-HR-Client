@@ -4,20 +4,20 @@
     :token="token"
     :employee_id="employee_id"
     @emit-post-punch="postPunch"
+    @emit-user-position="userPosition"
     @emit-get-2d-code="get2dCode"
   ></page-navbar>
   <!-- Header -->
   <header>
-    <h4>XXX，你好。今天也是個美好的一天。</h4>
+    <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
     <h4>你的打卡狀態：未打卡</h4>
   </header>
   <div name="dev">
     <h1>{{ message }}</h1>
-    <button @click="position">GPS定位</button>
-    <button @click="distanceCalculator">計算距離</button>
     <h6>token: {{ token }}</h6>
     <h6>App.vue.response: {{ response }}</h6>
     <h6>App.vue.employee_id: {{ employee_id }}</h6>
+    <h6>使用者所在緯度、經度：{{ user_latlng_1 }}、{{ user_latlng_2 }}</h6>
   </div>
   <!-- 登入表單 -->
   <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
@@ -33,7 +33,7 @@
     @emit-get-2d-code="get2dCode"
   ></two-d-code>
   <!-- GoogleMap -->
-  <google-map></google-map>
+  <google-map />
 </template>
 
 <script>
@@ -55,14 +55,22 @@ export default {
   },
   data() {
     return {
+      distance: null,
       employee_id: null,
+      full_name: null,
       message: null,
       response: null,
       token: null,
       two_d_code: null,
+      user_latlng_1: null,
+      user_latlng_2: null,
     };
   },
   methods: {
+    // 這是便於開發的方法，提交前需刪除。
+    test() {
+      console.log("test方法已執行");
+    },
     changePassword(res) {
       this.message = res.message;
       this.response = res;
@@ -89,9 +97,55 @@ export default {
           });
       }
     },
+    userPosition() {
+      fetch(
+        `https://www.googleapis.com/geolocation/v1/geolocate?key=
+        ${import.meta.env.VITE_GOOGLE_MAP_API_KEY}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          this.response = res;
+          this.user_latlng_1 = res.location.lat;
+          this.user_latlng_2 = res.location.lng;
+          this.distanceCalculator(res.location.lat, res.location.lng);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    gpsPunch(distance) {
+      if (distance <= 0.4) {
+        fetch("http://localhost:8000/api/punches", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            this.postPunch(res);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        this.message =
+          "你與公司的距離大於 0.4 公里，或者無法確認，因此不能打卡。";
+      }
+    },
     // 本專案使用 Google Distance Matrix Service API
     // https://developers.google.com/maps/documentation/javascript/distancematrix?hl=zh-tw#distance_matrix_parsing_the_results
-    distanceCalculator() {
+    async distanceCalculator(latlng1, latlng2) {
       // origins (必要)：計算距離和時間時要做為起點的陣列，在此假設為公司所在經緯度。
       var origin1 = new google.maps.LatLng(
         import.meta.env.VITE_LATLNG_TITAN_1,
@@ -99,13 +153,10 @@ export default {
       );
       var origin2 = "Taiwan";
       var destinationA = "Taiwan";
-      var destinationB = new google.maps.LatLng(
-        import.meta.env.VITE_LATLNG_HOME_1,
-        import.meta.env.VITE_LATLNG_HOME_2
-      );
+      var destinationB = new google.maps.LatLng(latlng1, latlng2);
 
       var service = new google.maps.DistanceMatrixService();
-      service.getDistanceMatrix(
+      await service.getDistanceMatrix(
         {
           origins: [origin1, origin2],
           destinations: [destinationA, destinationB],
@@ -114,42 +165,12 @@ export default {
         },
         callback
       );
-
-      function callback(response, status) {
-        // See Parsing the Results for
-        // the basics of a callback function.
-        console.log(response);
-        console.log("distance", response.rows[0].elements[1].distance.text);
-        console.log("status ==== ", status);
+      function callback(response) {
+        window.distance = Number(
+          response.rows[0].elements[1].distance.text.split(" ")[0]
+        );
       }
-    },
-    // 瀏覽器GPS定位
-    position() {
-      if (navigator.geolocation) {
-        console.log("瀏覽器啟用地理位置功能");
-        fetch(
-          `https://www.googleapis.com/geolocation/v1/geolocate?key=
-        ${import.meta.env.VITE_GOOGLE_MAP_API_KEY}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            // body: gps,
-          }
-        )
-          .then((res) => {
-            return res.json();
-          })
-          .then((res) => {
-            this.response = res;
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      } else {
-        alert("你的裝置不支援地理位置功能");
-      }
+      this.gpsPunch(window.distance);
     },
     postPunch(res) {
       this.message = res.message;
@@ -157,6 +178,7 @@ export default {
     },
     signIn(res) {
       this.employee_id = res.data.employee.code;
+      this.full_name = res.data.employee.fullName;
       this.message = res.message;
       this.response = res;
       this.token = res.data.token;

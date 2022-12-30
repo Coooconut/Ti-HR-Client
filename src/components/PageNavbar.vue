@@ -15,9 +15,6 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
           <!-- 登入系統 -->
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="toggleSignInForm"
@@ -26,7 +23,9 @@
           </li>
           <!-- 按鈕打卡 -->
           <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent="postPunch">按鈕打卡</a>
+            <a class="nav-link" href="#" @click.prevent="postPunch"
+              >GPS定位打卡</a
+            >
           </li>
           <!-- 二維碼打卡 -->
           <li class="nav-item">
@@ -70,7 +69,7 @@ export default {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useFormStore),
   },
-  emits: ["emit-post-punch", "emit-get-2d-code"],
+  emits: ["emit-user-position", "emit-get-2d-code"],
   methods: {
     toggle2dCode() {
       this.$emit("emit-get-2d-code");
@@ -87,21 +86,7 @@ export default {
       this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
     },
     postPunch() {
-      fetch("http://localhost:8000/api/punches", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          this.$emit("emit-post-punch", res);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+      this.$emit("emit-user-position");
     },
   },
 };

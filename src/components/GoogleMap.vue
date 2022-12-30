@@ -1,19 +1,35 @@
 <template>
   <GMapMap
     :center="center"
-    :zoom="7"
+    :zoom="15"
     map-type-id="terrain"
-    style="width: 60vw; height: 40vw"
+    style="width: 50vw; height: 50vh"
   >
+    <GMapMarker
+      :key="marker.id"
+      v-for="marker in markers"
+      :position="marker.position"
+    />
   </GMapMap>
 </template>
-
 <script>
 export default {
   name: "GoogleMap",
   data() {
     return {
-      center: { lat: 51.093048, lng: 6.84212 },
+      center: {
+        lat: 25.05756263191021,
+        lng: 121.61238726873873,
+      },
+      markers: [
+        {
+          id: "TitanSoft",
+          position: {
+            lat: 25.05756263191021,
+            lng: 121.61238726873873,
+          },
+        },
+      ],
     };
   },
 };
