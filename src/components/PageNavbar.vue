@@ -69,10 +69,10 @@ export default {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useFormStore),
   },
-  emits: ["emit-user-position", "emit-get-2d-code"],
+  emits: ["emit-user-position", "emit-get-user-ip"],
   methods: {
     toggle2dCode() {
-      this.$emit("emit-get-2d-code");
+      this.$emit("emit-get-user-ip");
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
       this.formStore.isOpen2dCode = !this.formStore.isOpen2dCode;
     },

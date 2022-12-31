@@ -5,7 +5,7 @@
     :employee_id="employee_id"
     @emit-post-punch="postPunch"
     @emit-user-position="userPosition"
-    @emit-get-2d-code="get2dCode"
+    @emit-get-user-ip="getUserIP"
   ></page-navbar>
   <!-- Header -->
   <header>
@@ -15,6 +15,7 @@
   <div name="dev">
     <h1>{{ message }}</h1>
     <h6>token: {{ token }}</h6>
+    <h6>User IP: {{ user_ip }}</h6>
     <h6>App.vue.response: {{ response }}</h6>
     <h6>App.vue.employee_id: {{ employee_id }}</h6>
     <h6>使用者所在緯度、經度：{{ user_latlng_1 }}、{{ user_latlng_2 }}</h6>
@@ -27,11 +28,7 @@
     @emit-change-password="changePassword"
   ></change-password-form>
   <!-- 二維碼 -->
-  <two-d-code
-    :token="token"
-    :two_d_code="two_d_code"
-    @emit-get-2d-code="get2dCode"
-  ></two-d-code>
+  <two-d-code :two_d_code="two_d_code"></two-d-code>
   <!-- GoogleMap -->
   <google-map />
 </template>
@@ -62,6 +59,7 @@ export default {
       response: null,
       token: null,
       two_d_code: null,
+      user_ip: null,
       user_latlng_1: null,
       user_latlng_2: null,
     };
@@ -75,22 +73,31 @@ export default {
       this.message = res.message;
       this.response = res;
     },
-    get2dCode() {
+    getUserIP() {
+      fetch("https://api.ipify.org?format=json")
+        .then((res) => res.json())
+        .then(({ ip }) => {
+          this.user_ip = ip;
+          this.show2dCode();
+        });
+    },
+    show2dCode() {
       if (!this.two_d_code) {
-        fetch(
-          `http://localhost:8000/api/employees/:${this.employee_id}/2d_code`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          }
-        )
+        fetch(`http://localhost:8000/api/employees/2d_code_auth`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${this.token}`,
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+          },
+          body: `userIP=${this.user_ip}`,
+        })
           .then((res) => {
             return res.json();
           })
           .then((res) => {
             this.two_d_code = res.punchCode;
+            this.message = res.message;
           })
           .catch((err) => {
             console.error(err);
