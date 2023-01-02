@@ -7,36 +7,52 @@
     @emit-user-position="userPosition"
     @emit-get-user-ip="getUserIP"
   ></page-navbar>
-  <!-- Header -->
-  <header>
-    <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
-    <h4>你的打卡狀態：未打卡</h4>
-  </header>
-  <div name="dev">
-    <h1>{{ message }}</h1>
-    <h6>token: {{ token }}</h6>
-    <h6>User IP: {{ user_ip }}</h6>
-    <h6>App.vue.response: {{ response }}</h6>
-    <h6>App.vue.employee_id: {{ employee_id }}</h6>
-    <h6>使用者所在緯度、經度：{{ user_latlng_1 }}、{{ user_latlng_2 }}</h6>
-  </div>
-  <!-- 登入表單 -->
-  <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
-  <!-- 更改密碼表單 -->
-  <change-password-form
-    :token="token"
-    @emit-change-password="changePassword"
-  ></change-password-form>
-  <!-- 二維碼 -->
-  <two-d-code :two_d_code="two_d_code"></two-d-code>
-  <!-- GoogleMap -->
-  <google-map />
+  <!-- Main -->
+  <main>
+    <!-- Header -->
+    <header>
+      <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
+      <h4>你的打卡狀態：未打卡</h4>
+      <!-- getPunches -->
+      <button @click="getPunches">查閱打卡記錄</button>
+    </header>
+    <div name="dev">
+      <h1>部署提示：暫時移除Proxy設定</h1>
+      <h1>{{ message }}</h1>
+      <p>token: {{ token }}</p>
+      <h6>Punch Count: {{ count }} Page Count: {{ page_sum }}</h6>
+      <h6>User IP: {{ user_ip }}</h6>
+      <h6>App.vue.response: {{ response }}</h6>
+      <h6>App.vue.employee_id: {{ employee_id }}</h6>
+      <h6>使用者所在緯度、經度：{{ user_latlng_1 }}、{{ user_latlng_2 }}</h6>
+    </div>
+    <!-- 登入表單 -->
+    <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
+    <!-- 更改密碼表單 -->
+    <change-password-form
+      :token="token"
+      @emit-change-password="changePassword"
+    ></change-password-form>
+    <!-- 二維碼 -->
+    <two-d-code :two_d_code="two_d_code"></two-d-code>
+    <!-- Pagination -->
+    <punch-table
+      :count="count"
+      :data="data"
+      :page_sum="page_sum"
+      :page_current="page_current"
+      :@emit-change-page="getPunches"
+    ></punch-table>
+    <!-- GoogleMap -->
+    <google-map />
+  </main>
 </template>
 
 <script>
 import { RouterLink, RouterView } from "vue-router";
 import ChangePasswordForm from "./components/ChangePasswordForm.vue";
 import PageNavbar from "./components/PageNavbar.vue";
+import PunchTable from "./components/PunchTable.vue";
 import SignInForm from "./components/SignInForm.vue";
 import TwoDCode from "./components/TwoDCode.vue";
 import GoogleMap from "./components/GoogleMap.vue";
@@ -46,12 +62,17 @@ export default {
   components: {
     ChangePasswordForm,
     PageNavbar,
+    PunchTable,
     SignInForm,
     TwoDCode,
     GoogleMap,
   },
   data() {
     return {
+      count: null,
+      page_current: 1,
+      page_sum: null,
+      data: null,
       distance: null,
       employee_id: null,
       full_name: null,
@@ -72,6 +93,29 @@ export default {
     changePassword(res) {
       this.message = res.message;
       this.response = res;
+    },
+    getPunches() {
+      fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/punches?` +
+          new URLSearchParams({
+            page: this.page_current,
+          }),
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res) => {
+          this.response = res;
+          this.message = res.message;
+          this.count = res.count;
+          this.data = res.data;
+          this.page_sum = Math.ceil(this.count / 10);
+        });
     },
     getUserIP() {
       fetch("https://api.ipify.org?format=json")
