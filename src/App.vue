@@ -13,8 +13,6 @@
     <header>
       <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
       <h4>你的打卡狀態：未打卡</h4>
-      <!-- getPunches -->
-      <button @click="getPunches">查閱打卡記錄</button>
     </header>
     <div name="dev">
       <h1>部署提示：暫時移除Proxy設定</h1>
@@ -41,8 +39,18 @@
       :data="data"
       :page_sum="page_sum"
       :page_current="page_current"
-      :@emit-change-page="getPunches"
     ></punch-table>
+    <!-- getPunches -->
+    <button class="btn btn-primary" @click="getPunches">查閱打卡記錄</button>
+    <paginate
+      v-model="page"
+      :page-count="page_sum"
+      :page-range="20"
+      :click-handler="getPunches"
+      :prev-text="'Prev'"
+      :next-text="'Next'"
+      :container-class="'pagination'"
+    ></paginate>
     <!-- GoogleMap -->
     <google-map />
   </main>
@@ -50,6 +58,7 @@
 
 <script>
 import { RouterLink, RouterView } from "vue-router";
+import Paginate from "vuejs-paginate-next";
 import ChangePasswordForm from "./components/ChangePasswordForm.vue";
 import PageNavbar from "./components/PageNavbar.vue";
 import PunchTable from "./components/PunchTable.vue";
@@ -66,6 +75,7 @@ export default {
     SignInForm,
     TwoDCode,
     GoogleMap,
+    Paginate,
   },
   data() {
     return {
@@ -95,6 +105,7 @@ export default {
       this.response = res;
     },
     getPunches() {
+      this.page_current = this.page;
       fetch(
         `${import.meta.env.VITE_BASE_URL}/api/punches?` +
           new URLSearchParams({

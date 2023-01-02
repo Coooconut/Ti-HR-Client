@@ -24,40 +24,16 @@
       </tr>
     </tbody>
   </table>
-  <!-- Pagination -->
-  <nav aria-label="Page navigation">
-    <ul class="pagination">
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Previous">
-          <span aria-hidden="true">&lt;</span>
-        </a>
-      </li>
-      <li class="page-item" v-for="number in page_sum" :key="number.index">
-        <button class="page-link" :page="page">{{ number }}</button>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Next">
-          <span aria-hidden="true">&gt;</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
 </template>
 
 <script>
 export default {
   name: "PunchTable",
   props: ["count", "data", "page_current", "page_sum"],
-  emits: ["emit-change-page"],
   data() {
     return {
       page: null,
     };
-  },
-  methods: {
-    changePage() {
-      this.$emit("emit-change-page", this.number.index);
-    },
   },
 };
 </script>
