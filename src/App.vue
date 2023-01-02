@@ -12,17 +12,10 @@
     <!-- Header -->
     <header>
       <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
-      <h4>你的打卡狀態：未打卡</h4>
     </header>
     <div name="dev">
-      <h1>部署提示：後端白名單刪除多餘的斜線</h1>
       <h1>{{ message }}</h1>
-      <p>token: {{ token }}</p>
-      <h6>Punch Count: {{ count }} Page Count: {{ page_sum }}</h6>
-      <h6>User IP: {{ user_ip }}</h6>
-      <h6>App.vue.response: {{ response }}</h6>
-      <h6>App.vue.employee_id: {{ employee_id }}</h6>
-      <h6>使用者所在緯度、經度：{{ user_latlng_1 }}、{{ user_latlng_2 }}</h6>
+      <p>App.vue.response: {{ response }}</p>
     </div>
     <!-- 登入表單 -->
     <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
@@ -96,10 +89,6 @@ export default {
     };
   },
   methods: {
-    // 這是便於開發的方法，提交前需刪除。
-    test() {
-      console.log("test方法已執行");
-    },
     changePassword(res) {
       this.message = res.message;
       this.response = res;
@@ -138,7 +127,6 @@ export default {
     },
     show2dCode() {
       if (!this.two_d_code) {
-        // `/api/signin`
         fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/2d_code_auth`, {
           method: "POST",
           headers: {
@@ -154,6 +142,7 @@ export default {
           .then((res) => {
             this.two_d_code = res.punchCode;
             this.message = res.message;
+            this.response = res;
           })
           .catch((err) => {
             console.error(err);
@@ -206,8 +195,10 @@ export default {
           "你與公司的距離大於 0.4 公里，或者無法確認，因此不能打卡。";
       }
     },
-    // 本專案使用 Google Distance Matrix Service API
-    // https://developers.google.com/maps/documentation/javascript/distancematrix?hl=zh-tw#distance_matrix_parsing_the_results
+    /*
+    檢查打卡地點與公司距離。本專案使用 Google Distance Matrix Service API。
+    Google 官方文件：https://developers.google.com/maps/documentation/javascript/distancematrix?hl=zh-tw#distance_matrix_parsing_the_results
+    */
     async distanceCalculator(latlng1, latlng2) {
       // origins (必要)：計算距離和時間時要做為起點的陣列，在此假設為公司所在經緯度。
       var origin1 = new google.maps.LatLng(
