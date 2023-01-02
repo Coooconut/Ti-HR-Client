@@ -52,7 +52,7 @@ export default {
   emits: ["emit-sign-in"],
   methods: {
     signIn(values) {
-      fetch("http://localhost:8000/api/signin", {
+      fetch(`${import.meta.env.VITE_BASE_URL}/api/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",

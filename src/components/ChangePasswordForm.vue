@@ -65,7 +65,7 @@ export default {
   emits: ["emit-change-password"],
   methods: {
     changPassword(values) {
-      fetch("http://localhost:8000/api/employees/password", {
+      fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",

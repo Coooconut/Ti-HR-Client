@@ -15,7 +15,7 @@
       <h4>你的打卡狀態：未打卡</h4>
     </header>
     <div name="dev">
-      <h1>部署提示：暫時移除Proxy設定</h1>
+      <h1>部署提示：後端白名單刪除多餘的斜線</h1>
       <h1>{{ message }}</h1>
       <p>token: {{ token }}</p>
       <h6>Punch Count: {{ count }} Page Count: {{ page_sum }}</h6>
@@ -138,7 +138,8 @@ export default {
     },
     show2dCode() {
       if (!this.two_d_code) {
-        fetch(`http://localhost:8000/api/employees/2d_code_auth`, {
+        // `/api/signin`
+        fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/2d_code_auth`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -185,7 +186,7 @@ export default {
     },
     gpsPunch(distance) {
       if (distance <= 0.4) {
-        fetch("http://localhost:8000/api/punches", {
+        fetch(`${import.meta.env.VITE_BASE_URL}/api/punches`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${this.token}`,
