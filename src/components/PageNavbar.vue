@@ -25,15 +25,19 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="gps">GPS 打卡頁面</RouterLink>
           </li>
-          <!-- /admin -->
+          <!-- /admin 人資專區 -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="admin">人資專區</RouterLink>
           </li>
-          <!-- 二維碼打卡 -->
+          <!-- 生成二維碼 -->
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="toggle2dCode"
-              >二維碼打卡</a
+              >取得打卡二維碼</a
             >
+          </li>
+          <!-- /code-reader 掃碼打卡 -->
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="code-reader">掃碼打卡</RouterLink>
           </li>
           <!-- 更改密碼 -->
           <li class="nav-item">

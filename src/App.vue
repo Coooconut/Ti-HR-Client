@@ -15,6 +15,7 @@
     <div name="dev">
       <h1>{{ message }}</h1>
       <p>App.vue.response: {{ response }}</p>
+      <p>App.vue.ip: {{ user_ip }}</p>
       <p>auth.token = {{ this.authStore.token }}</p>
     </div>
     <!-- 登入表單 -->

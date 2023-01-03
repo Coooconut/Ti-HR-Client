@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AdminView from "../views/AdminView.vue";
 import GpsView from "../views/GpsView.vue";
+import CodeReader from "../views/CodeReader.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +19,11 @@ const router = createRouter({
       path: "/gps",
       component: GpsView,
       name: "gps",
+    },
+    {
+      path: "/code-reader",
+      component: CodeReader,
+      name: "CodeReader",
     },
   ],
 });
