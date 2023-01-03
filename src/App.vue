@@ -3,9 +3,8 @@
   <page-navbar
     :token="token"
     :employee_id="employee_id"
-    @emit-post-punch="postPunch"
-    @emit-user-position="userPosition"
     @emit-get-user-ip="getUserIP"
+    @emit-sign-out="signOut"
   ></page-navbar>
   <!-- Main -->
   <main>
@@ -139,6 +138,9 @@ export default {
       this.response = res;
       this.token = res.data.token;
       this.authStore.token = res.data.token;
+    },
+    signOut() {
+      this.message = "你已登出系統";
     },
   },
 };
