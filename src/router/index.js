@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import AdminView from "../views/AdminView.vue";
+import GpsView from "../views/GpsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,11 +10,14 @@ const router = createRouter({
       name: "home",
     },
     {
-      path: "/about",
-      name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
+      path: "/admin",
+      component: AdminView,
+      name: "admin",
+    },
+    {
+      path: "/gps",
+      component: GpsView,
+      name: "gps",
     },
   ],
 });

@@ -27,6 +27,14 @@
               >GPS定位打卡</a
             >
           </li>
+          <!-- /gps -->
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="gps">GPS打卡頁面</RouterLink>
+          </li>
+          <!-- /admin -->
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="admin">人資專區</RouterLink>
+          </li>
           <!-- 二維碼打卡 -->
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="toggle2dCode"
@@ -61,6 +69,7 @@
 // 利用 mapStores 插件將 store 融入元件
 import { mapStores } from "pinia";
 import useFormStore from "@/stores/form";
+import { RouterLink } from "vue-router";
 
 export default {
   name: "PageNavbar",
@@ -89,5 +98,6 @@ export default {
       this.$emit("emit-user-position");
     },
   },
+  components: { RouterLink },
 };
 </script>

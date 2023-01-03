@@ -26,7 +26,7 @@
     ></change-password-form>
     <!-- 二維碼 -->
     <two-d-code :two_d_code="two_d_code"></two-d-code>
-    <!-- Pagination -->
+    <!-- 出勤記錄表 -->
     <punch-table
       :count="count"
       :data="data"
@@ -45,8 +45,9 @@
       :container-class="'pagination'"
     ></paginate>
     <!-- GoogleMap -->
-    <google-map />
+    <!-- <google-map /> -->
   </main>
+  <router-view />
 </template>
 
 <script>
@@ -67,7 +68,6 @@ export default {
     PunchTable,
     SignInForm,
     TwoDCode,
-    GoogleMap,
     Paginate,
   },
   data() {
