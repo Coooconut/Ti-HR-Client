@@ -16,6 +16,7 @@
     <div name="dev">
       <h1>{{ message }}</h1>
       <p>App.vue.response: {{ response }}</p>
+      <p>auth.token = {{ this.authStore.token }}</p>
     </div>
     <!-- 登入表單 -->
     <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
@@ -26,24 +27,6 @@
     ></change-password-form>
     <!-- 二維碼 -->
     <two-d-code :two_d_code="two_d_code"></two-d-code>
-    <!-- 出勤記錄表 -->
-    <punch-table
-      :count="count"
-      :data="data"
-      :page_sum="page_sum"
-      :page_current="page_current"
-    ></punch-table>
-    <!-- getPunches -->
-    <button class="btn btn-primary" @click="getPunches">查閱打卡記錄</button>
-    <paginate
-      v-model="page"
-      :page-count="page_sum"
-      :page-range="20"
-      :click-handler="getPunches"
-      :prev-text="'Prev'"
-      :next-text="'Next'"
-      :container-class="'pagination'"
-    ></paginate>
     <!-- GoogleMap -->
     <!-- <google-map /> -->
   </main>
@@ -52,10 +35,12 @@
 
 <script>
 import { RouterLink, RouterView } from "vue-router";
+import { mapStores } from "pinia";
+import useAuthStore from "./stores/auth";
 import Paginate from "vuejs-paginate-next";
 import ChangePasswordForm from "./components/ChangePasswordForm.vue";
 import PageNavbar from "./components/PageNavbar.vue";
-import PunchTable from "./components/PunchTable.vue";
+// import PunchTable from "./components/PunchTable.vue";
 import SignInForm from "./components/SignInForm.vue";
 import TwoDCode from "./components/TwoDCode.vue";
 import GoogleMap from "./components/GoogleMap.vue";
@@ -65,10 +50,13 @@ export default {
   components: {
     ChangePasswordForm,
     PageNavbar,
-    PunchTable,
+    // PunchTable,
     SignInForm,
     TwoDCode,
-    Paginate,
+  },
+  computed: {
+    // mapStores 需搭配展開運算子，引數代入 store。
+    ...mapStores(useAuthStore),
   },
   data() {
     return {
@@ -236,6 +224,7 @@ export default {
       this.message = res.message;
       this.response = res;
       this.token = res.data.token;
+      this.authStore.token = res.data.token;
     },
   },
 };
