@@ -21,15 +21,9 @@
               >登入系統</a
             >
           </li>
-          <!-- 按鈕打卡 -->
+          <!-- GPS 按鈕打卡 -->
           <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent="postPunch"
-              >GPS定位打卡</a
-            >
-          </li>
-          <!-- /gps -->
-          <li class="nav-item">
-            <RouterLink class="nav-link" to="gps">GPS打卡頁面</RouterLink>
+            <RouterLink class="nav-link" to="gps">GPS 打卡頁面</RouterLink>
           </li>
           <!-- /admin -->
           <li class="nav-item">
@@ -52,13 +46,13 @@
           </li>
         </ul>
         <form class="d-flex" role="search">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            @click.prevent="signOut"
+          >
+            登出系統
+          </button>
         </form>
       </div>
     </div>
@@ -69,6 +63,7 @@
 // 利用 mapStores 插件將 store 融入元件
 import { mapStores } from "pinia";
 import useFormStore from "@/stores/form";
+import useAuthStore from "@/stores/auth";
 import { RouterLink } from "vue-router";
 
 export default {
@@ -78,7 +73,7 @@ export default {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useFormStore),
   },
-  emits: ["emit-user-position", "emit-get-user-ip"],
+  emits: ["emit-get-user-ip", "emit-sign-out"],
   methods: {
     toggle2dCode() {
       this.$emit("emit-get-user-ip");
@@ -94,9 +89,11 @@ export default {
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
       this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
     },
-    postPunch() {
-      this.$emit("emit-user-position");
-    },
+    signOut() {
+      const auth = useAuthStore();
+      auth.token = null;
+      this.$emit("emit-sign-out");
+    }
   },
   components: { RouterLink },
 };
