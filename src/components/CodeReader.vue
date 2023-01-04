@@ -1,9 +1,9 @@
 <template>
   <div>
     <p class="error">{{ error }}</p>
-    <p class="decode-result">
-      最近的掃碼結果：<b>{{ result }}</b>
-    </p>
+    <div class="result-container">
+      <p class="decode-result">最近的掃碼結果：{{ result }}</p>
+    </div>
     <qrcode-stream @decode="onDecode" @init="onInit" />
   </div>
 </template>
@@ -15,7 +15,7 @@ import { createToaster } from "@meforma/vue-toaster";
 
 const toasterInfo = createToaster({
   type: "info",
-  position: "top",
+  position: "top-left",
   duration: 8000,
 });
 
@@ -83,5 +83,13 @@ export default {
 .error {
   font-weight: bold;
   color: red;
+}
+
+.result-container {
+  width: 80vh;
+}
+
+.decode-result {
+  word-wrap: break-word;
 }
 </style>
