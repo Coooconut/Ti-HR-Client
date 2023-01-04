@@ -1,9 +1,5 @@
 <template>
-  <vee-form
-    :class="hiddenClassSignInForm"
-    v-bind:validation-schema="schema"
-    v-on:submit="signIn"
-  >
+  <vee-form class="mt-5" v-bind:validation-schema="schema" v-on:submit="signIn">
     <!-- 員工編號 -->
     <div class="mb-3">
       <label for="employee_code" class="form-label">員工編號</label>

@@ -19,7 +19,11 @@
       <p>auth.token = {{ this.authStore.token }}</p>
     </div> -->
     <!-- 登入表單 -->
-    <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
+    <sign-in-form
+      v-if="this.token === null"
+      :response="response"
+      @emit-sign-in="signIn"
+    ></sign-in-form>
     <!-- 更改密碼表單 -->
     <change-password-form
       :token="token"
@@ -150,6 +154,7 @@ export default {
       this.authStore.user = res.data.employee;
     },
     signOut() {
+      this.token = null;
       this.authStore.twoDCode = null;
       this.authStore.user = null;
       toasterInfo.show("你已登出系統");
