@@ -1,9 +1,5 @@
 <template>
-  <vee-form
-    :class="hiddenClassChangePasswordForm"
-    v-bind:validation-schema="schema"
-    v-on:submit="changPassword"
-  >
+  <vee-form v-bind:validation-schema="schema" v-on:submit="changPassword">
     <!-- 舊密碼 -->
     <div class="mb-3">
       <label for="password" class="form-label">舊密碼</label>
@@ -48,6 +44,14 @@
 <script>
 import { mapState, mapStores } from "pinia";
 import useFormStore from "@/stores/form";
+import useAuthStore from "@/stores/auth";
+import { createToaster } from "@meforma/vue-toaster";
+
+const toasterInfo = createToaster({
+  type: "info",
+  position: "top",
+  duration: 5000,
+});
 
 export default {
   name: "ChangPasswordForm",
@@ -65,11 +69,12 @@ export default {
   emits: ["emit-change-password"],
   methods: {
     changPassword(values) {
+      const auth = useAuthStore();
       fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-          Authorization: `Bearer ${this.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
         body: `password=${values.password}&newPassword=${values.new_password}&newPasswordConfirm=${values.new_password_confirm}`,
       })
@@ -77,9 +82,7 @@ export default {
           return res.json();
         })
         .then((res) => {
-          this.$emit("emit-change-password", res);
-          this.formStore.isOpenChangePasswordForm =
-            !this.formStore.isOpenChangePasswordForm;
+          toasterInfo.show(res.message);
         })
         .catch((err) => {
           console.error(err);

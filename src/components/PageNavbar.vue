@@ -42,12 +42,10 @@
           </li>
           <!-- 更改密碼 -->
           <li class="nav-item">
-            <a
-              class="nav-link"
-              href="#"
-              @click.prevent="toggleChangePasswordForm"
-              >更改密碼</a
+            <RouterLink class="nav-link" to="change-password"
+              >更改密碼</RouterLink
             >
+
           </li>
         </ul>
         <form class="d-flex" role="search">
