@@ -1,9 +1,5 @@
 <template>
   <div class="gps-app">
-    <h6>GPS response: {{ response }}</h6>
-    <h6>使用者現在緯度：{{ user_latlng_1 }}</h6>
-    <h6>使用者現在經度：{{ user_latlng_2 }}</h6>
-    <h6>Message：{{ message }}</h6>
     <button class="btn btn-primary">確認現在位置</button>
     <button
       class="btn btn-success"
@@ -16,13 +12,22 @@
 
 <script setup>
 import { ref, reactive } from "vue";
+import { createToaster } from "@meforma/vue-toaster";
 import useAuthStore from "../stores/auth";
 const auth = useAuthStore();
+const toasterError = createToaster({
+  type: "error",
+  position: "top",
+  duration: 8000,
+});
+const toasterInfo = createToaster({
+  type: "info",
+  position: "top",
+  duration: 8000,
+});
 
 let message = ref(null);
 let response = ref(null);
-let user_latlng_1 = ref(null);
-let user_latlng_2 = ref(null);
 
 // 偵測使用者所在位置，回呼函式代入計算所在位置與公司距離的函式 distanceCalculator()
 function userPosition(cb) {
@@ -44,8 +49,6 @@ function userPosition(cb) {
       })
       .then((res) => {
         response.value = res;
-        user_latlng_1.value = res.location.lat;
-        user_latlng_2.value = res.location.lng;
         cb(res.location.lat, res.location.lng);
       })
       .catch((err) => {
@@ -93,7 +96,9 @@ async function distanceCalculator(latlng1, latlng2) {
   ) {
     gpsPunch();
   } else {
-    message.value = "你與公司的距離大於 400 公尺，或者無法確認，因此不能打卡。";
+    toasterError.show(
+      "你與公司的距離大於 400 公尺，或者無法確認，因此不能打卡。"
+    );
   }
 }
 
@@ -109,7 +114,7 @@ function gpsPunch() {
       return res.json();
     })
     .then((res) => {
-      message.value = res.message;
+      toasterInfo.show(res.message);
     })
     .catch((err) => {
       console.error(err);

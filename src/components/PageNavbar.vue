@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <h4 class="navbar-brand" href="#">Ti 專業人資系統</h4>
+      <RouterLink class="navbar-brand" to="/">Ti 專業人資系統</RouterLink>
       <button
         class="navbar-toggler"
         type="button"
