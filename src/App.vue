@@ -12,12 +12,12 @@
     <header>
       <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
     </header>
-    <div name="dev">
+    <!-- <div name="dev">
       <h1>{{ message }}</h1>
       <p>App.vue.response: {{ response }}</p>
-      <!-- <p>App.vue.ip: {{ user_ip }}</p> -->
+      <p>App.vue.ip: {{ user_ip }}</p>
       <p>auth.token = {{ this.authStore.token }}</p>
-    </div>
+    </div> -->
     <!-- 登入表單 -->
     <sign-in-form :response="response" @emit-sign-in="signIn"></sign-in-form>
     <!-- 更改密碼表單 -->
@@ -26,7 +26,9 @@
       @emit-change-password="changePassword"
     ></change-password-form>
     <!-- 二維碼 -->
-    <two-d-code :two_d_code="two_d_code"></two-d-code>
+    <div class="container">
+      <two-d-code :two_d_code="two_d_code"></two-d-code>
+    </div>
   </main>
   <router-view />
 </template>
@@ -153,4 +155,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.container {
+  display: flex;
+  justify-content: center;
+}
+</style>

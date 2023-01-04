@@ -28,15 +28,17 @@
   </table>
   <button class="btn btn-primary" @click="getPunches">查閱打卡記錄</button>
   <!-- Pagination -->
-  <paginate
-    v-model="page"
-    :page-count="page_sum"
-    :page-range="20"
-    :click-handler="getPunches"
-    :prev-text="'Prev'"
-    :next-text="'Next'"
-    :container-class="'pagination'"
-  ></paginate>
+  <div class="container">
+    <paginate
+      v-model="page"
+      :page-count="page_sum"
+      :page-range="20"
+      :click-handler="getPunches"
+      :prev-text="'Prev'"
+      :next-text="'Next'"
+      :container-class="'pagination'"
+    ></paginate>
+  </div>
 </template>
 
 <script>
@@ -91,3 +93,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.container {
+  display: flex;
+  justify-content: center;
+}
+</style>
