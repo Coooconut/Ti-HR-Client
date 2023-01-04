@@ -12,6 +12,7 @@
     />
   </GMapMap>
 </template>
+
 <script>
 export default {
   name: "GoogleMap",

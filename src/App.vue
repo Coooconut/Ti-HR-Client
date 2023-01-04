@@ -9,8 +9,8 @@
   <!-- Main -->
   <main>
     <!-- Header -->
-    <header>
-      <h4>{{ full_name }}你好。今天也是個美好的一天。</h4>
+    <header v-if="this.authStore.user !== null">
+      <h4>{{ this.authStore.user.fullName }}你好。今天也是個美好的一天。</h4>
     </header>
     <!-- <div name="dev">
       <h1>{{ message }}</h1>
@@ -131,6 +131,7 @@ export default {
           })
           .then((res) => {
             this.two_d_code = res.punchCode;
+            this.authStore.twoDCode = res.punchCode;
             toasterInfo.show(res.message);
             this.response = res;
           })
@@ -146,8 +147,11 @@ export default {
       this.response = res;
       this.token = res.data.token;
       this.authStore.token = res.data.token;
+      this.authStore.user = res.data.employee;
     },
     signOut() {
+      this.authStore.twoDCode = null;
+      this.authStore.user = null;
       toasterInfo.show("你已登出系統");
     },
   },

@@ -9,10 +9,3 @@
 <script setup>
 import TwoDCode from "../components/TwoDCode.vue";
 </script>
-
-<style>
-.container {
-  display: flex;
-  justify-content: center;
-}
-</style>
