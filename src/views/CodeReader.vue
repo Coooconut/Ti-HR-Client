@@ -17,6 +17,6 @@ import CodeReader from "../components/CodeReader.vue";
 }
 
 .camera {
-  width: 30vw;
+  width: 40vh;
 }
 </style>

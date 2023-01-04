@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import { createToaster } from "@meforma/vue-toaster";
 import useAuthStore from "../stores/auth";
 const auth = useAuthStore();
@@ -26,13 +26,12 @@ const toasterInfo = createToaster({
   duration: 8000,
 });
 
-let message = ref(null);
 let response = ref(null);
 
 // 偵測使用者所在位置，回呼函式代入計算所在位置與公司距離的函式 distanceCalculator()
 function userPosition(cb) {
   if (!auth.token) {
-    message.value = "你尚未登入，登入後才能打卡。";
+    toasterError.show("你尚未登入，登入後才能打卡。");
   } else if (auth.token) {
     fetch(
       `https://www.googleapis.com/geolocation/v1/geolocate?key=

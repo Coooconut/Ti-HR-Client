@@ -26,9 +26,9 @@
       @emit-change-password="changePassword"
     ></change-password-form>
     <!-- 二維碼 -->
-    <div class="container">
+    <!-- <div class="container">
       <two-d-code :two_d_code="two_d_code"></two-d-code>
-    </div>
+    </div> -->
   </main>
   <router-view />
 </template>
@@ -41,7 +41,6 @@ import { createToaster } from "@meforma/vue-toaster";
 import ChangePasswordForm from "./components/ChangePasswordForm.vue";
 import PageNavbar from "./components/PageNavbar.vue";
 import SignInForm from "./components/SignInForm.vue";
-import TwoDCode from "./components/TwoDCode.vue";
 
 const toasterInfo = createToaster({
   type: "info",
@@ -55,7 +54,6 @@ export default {
     ChangePasswordForm,
     PageNavbar,
     SignInForm,
-    TwoDCode,
   },
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
@@ -112,6 +110,7 @@ export default {
       fetch("https://api.ipify.org?format=json")
         .then((res) => res.json())
         .then(({ ip }) => {
+          console.log(ip);
           this.user_ip = ip;
           this.show2dCode();
         });

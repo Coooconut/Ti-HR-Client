@@ -31,8 +31,11 @@
           </li>
           <!-- 生成二維碼 -->
           <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent="toggle2dCode"
-              >取得打卡二維碼</a
+            <RouterLink
+              class="nav-link"
+              to="2d-code"
+              @click.prevent="toggle2dCode"
+              >取得打卡二維碼</RouterLink
             >
           </li>
           <!-- /code-reader 掃碼打卡 -->
