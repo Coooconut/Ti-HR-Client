@@ -29,9 +29,6 @@
       <ErrorMessage class="form-validate-error" name="password" />
     </div>
     <button type="submit" class="btn btn-primary mb-3">登入系統 Submit</button>
-    <div class="alert alert-dismissible alert-danger" role="alert">
-      提示訊息：{{ signInFormMessage }}
-    </div>
   </vee-form>
 </template>
 
@@ -49,7 +46,6 @@ export default {
         employee_code: "required|length:8",
         password: "required",
       },
-      signInFormMessage: null,
     };
   },
   emits: ["emit-sign-in"],
@@ -66,7 +62,6 @@ export default {
           return res.json();
         })
         .then((res) => {
-          this.signInFormMessage = res.message;
           this.$emit("emit-sign-in", res);
           this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
         })

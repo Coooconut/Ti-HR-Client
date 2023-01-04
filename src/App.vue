@@ -15,6 +15,7 @@
     <div name="dev">
       <h1>{{ message }}</h1>
       <p>App.vue.response: {{ response }}</p>
+      <!-- <p>App.vue.ip: {{ user_ip }}</p> -->
       <p>auth.token = {{ this.authStore.token }}</p>
     </div>
     <!-- 登入表單 -->
@@ -34,11 +35,17 @@
 import { RouterLink, RouterView } from "vue-router";
 import { mapStores } from "pinia";
 import useAuthStore from "./stores/auth";
-// import Paginate from "vuejs-paginate-next";
+import { createToaster } from "@meforma/vue-toaster";
 import ChangePasswordForm from "./components/ChangePasswordForm.vue";
 import PageNavbar from "./components/PageNavbar.vue";
 import SignInForm from "./components/SignInForm.vue";
 import TwoDCode from "./components/TwoDCode.vue";
+
+const toasterInfo = createToaster({
+  type: "info",
+  position: "top",
+  duration: 8000,
+});
 
 export default {
   name: "App",
@@ -72,7 +79,7 @@ export default {
   },
   methods: {
     changePassword(res) {
-      this.message = res.message;
+      toasterInfo.show(res.message);
       this.response = res;
     },
     getPunches() {
@@ -123,7 +130,7 @@ export default {
           })
           .then((res) => {
             this.two_d_code = res.punchCode;
-            this.message = res.message;
+            toasterInfo.show(res.message);
             this.response = res;
           })
           .catch((err) => {
@@ -134,13 +141,13 @@ export default {
     signIn(res) {
       this.employee_id = res.data.employee.code;
       this.full_name = res.data.employee.fullName;
-      this.message = res.message;
+      toasterInfo.show(res.message);
       this.response = res;
       this.token = res.data.token;
       this.authStore.token = res.data.token;
     },
     signOut() {
-      this.message = "你已登出系統";
+      toasterInfo.show("你已登出系統");
     },
   },
 };
