@@ -31,6 +31,13 @@
 <script>
 import { mapState, mapStores } from "pinia";
 import useFormStore from "@/stores/form";
+import { createToaster } from "@meforma/vue-toaster";
+
+const toasterError = createToaster({
+  type: "error",
+  position: "top",
+  duration: 8000,
+});
 
 export default {
   name: "SignInForm",
@@ -58,8 +65,8 @@ export default {
           return res.json();
         })
         .then((res) => {
+          toasterError.show(res.message);
           this.$emit("emit-sign-in", res);
-          this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
         })
         .catch((err) => {
           console.error(err);
