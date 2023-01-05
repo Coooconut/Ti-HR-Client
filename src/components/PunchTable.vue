@@ -36,8 +36,8 @@
               改為到勤
             </button>
           </td>
-          <td>{{ punch.createdAt }}</td>
-          <td>{{ punch.updatedAt }}</td>
+          <td>{{ punch.in }}</td>
+          <td>{{ punch.out }}</td>
         </tr>
       </tbody>
     </table>
