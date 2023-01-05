@@ -39,7 +39,7 @@ export default {
     return {
       // 資料驗證的 schema
       schema: {
-        employee_code: "required|length:8",
+        employee_code: "required|max:8|min:4",
         password: "required",
       },
     };
