@@ -33,8 +33,8 @@ import { mapState, mapStores } from "pinia";
 import useFormStore from "@/stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 
-const toasterError = createToaster({
-  type: "error",
+const toasterInfo = createToaster({
+  type: "info",
   position: "top",
   duration: 8000,
 });
@@ -65,7 +65,7 @@ export default {
           return res.json();
         })
         .then((res) => {
-          toasterError.show(res.message);
+          toasterInfo.show(res.message);
           this.$emit("emit-sign-in", res);
         })
         .catch((err) => {

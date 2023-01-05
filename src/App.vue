@@ -132,7 +132,7 @@ export default {
     signIn(res) {
       this.employee_id = res.data.employee.code;
       this.full_name = res.data.employee.fullName;
-      toasterInfo.show(res.message);
+      // toasterInfo.show(res.message);
       this.response = res;
       this.token = res.data.token;
       this.authStore.token = res.data.token;
