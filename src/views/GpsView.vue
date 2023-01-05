@@ -1,8 +1,8 @@
 <template>
   <main>
     <div class="container">
-      <GpsApp />
       <GoogleMap />
+      <GpsApp />
     </div>
   </main>
 </template>

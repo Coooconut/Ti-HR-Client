@@ -1,6 +1,5 @@
 <template>
   <div class="gps-app">
-    <button class="btn btn-primary">確認現在位置</button>
     <button
       class="btn btn-success"
       @click.prevent="userPosition(distanceCalculator)"
@@ -48,6 +47,12 @@ function userPosition(cb) {
       })
       .then((res) => {
         response.value = res;
+        console.log(res.location.lat, res.location.lng);
+        console.log(
+          "import.meta.env.VITE_LATLNG_HOME",
+          import.meta.env.VITE_LATLNG_HOME_1,
+          import.meta.env.VITE_LATLNG_HOME_2
+        );
         cb(res.location.lat, res.location.lng);
       })
       .catch((err) => {
@@ -65,8 +70,8 @@ Google 官方文件：https://developers.google.com/maps/documentation/javascrip
 async function distanceCalculator(latlng1, latlng2) {
   // origins (必要)：計算距離和時間時要做為起點的陣列，在此假設為公司所在經緯度。
   var origin1 = new google.maps.LatLng(
-    import.meta.env.VITE_LATLNG_TITAN_1,
-    import.meta.env.VITE_LATLNG_TITAN_2
+    import.meta.env.VITE_LATLNG_HOME_1,
+    import.meta.env.VITE_LATLNG_HOME_2
   );
   var origin2 = "Taiwan";
   var destinationA = "Taiwan";
@@ -88,6 +93,7 @@ async function distanceCalculator(latlng1, latlng2) {
     );
     window.distanceUnit =
       response.rows[0].elements[1].distance.text.split(" ")[1];
+    console.info(window.distanceNumber, window.distanceUnit);
   }
   if (
     (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||

@@ -105,6 +105,7 @@ export default {
         });
     },
     show2dCode() {
+      console.log("show2dCode start");
       if (!this.two_d_code) {
         fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/2d_code_auth`, {
           method: "POST",
