@@ -24,15 +24,6 @@
       :response="response"
       @emit-sign-in="signIn"
     ></sign-in-form>
-    <!-- 更改密碼表單 -->
-    <change-password-form
-      :token="token"
-      @emit-change-password="changePassword"
-    ></change-password-form>
-    <!-- 二維碼 -->
-    <!-- <div class="container">
-      <two-d-code :two_d_code="two_d_code"></two-d-code>
-    </div> -->
   </main>
   <router-view />
 </template>
@@ -42,7 +33,6 @@ import { RouterLink, RouterView } from "vue-router";
 import { mapStores } from "pinia";
 import useAuthStore from "./stores/auth";
 import { createToaster } from "@meforma/vue-toaster";
-import ChangePasswordForm from "./components/ChangePasswordForm.vue";
 import PageNavbar from "./components/PageNavbar.vue";
 import SignInForm from "./components/SignInForm.vue";
 
@@ -55,7 +45,6 @@ const toasterInfo = createToaster({
 export default {
   name: "App",
   components: {
-    ChangePasswordForm,
     PageNavbar,
     SignInForm,
   },
@@ -82,10 +71,6 @@ export default {
     };
   },
   methods: {
-    changePassword(res) {
-      toasterInfo.show(res.message);
-      this.response = res;
-    },
     getPunches() {
       this.page_current = this.page;
       fetch(
@@ -120,6 +105,7 @@ export default {
         });
     },
     show2dCode() {
+      console.log("show2dCode start");
       if (!this.two_d_code) {
         fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/2d_code_auth`, {
           method: "POST",
@@ -147,7 +133,7 @@ export default {
     signIn(res) {
       this.employee_id = res.data.employee.code;
       this.full_name = res.data.employee.fullName;
-      toasterInfo.show(res.message);
+      // toasterInfo.show(res.message);
       this.response = res;
       this.token = res.data.token;
       this.authStore.token = res.data.token;

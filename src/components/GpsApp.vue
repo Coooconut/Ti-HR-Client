@@ -47,6 +47,7 @@ function userPosition(cb) {
       })
       .then((res) => {
         response.value = res;
+        console.log(res.location.lat, res.location.lng);
         cb(res.location.lat, res.location.lng);
       })
       .catch((err) => {
@@ -87,6 +88,7 @@ async function distanceCalculator(latlng1, latlng2) {
     );
     window.distanceUnit =
       response.rows[0].elements[1].distance.text.split(" ")[1];
+    console.info(window.distanceNumber, window.distanceUnit);
   }
   if (
     (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||

@@ -21,7 +21,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <!-- GPS 按鈕打卡 -->
           <li class="nav-item">
-            <RouterLink class="nav-link" to="gps">GPS 打卡頁面</RouterLink>
+            <RouterLink class="nav-link" to="gps">GPS 打卡</RouterLink>
           </li>
           <!-- /admin 人資專區 -->
           <li class="nav-item">
@@ -42,22 +42,19 @@
           </li>
           <!-- 更改密碼 -->
           <li class="nav-item">
-            <a
-              class="nav-link"
-              href="#"
-              @click.prevent="toggleChangePasswordForm"
-              >更改密碼</a
+            <RouterLink class="nav-link" to="change-password"
+              >更改密碼</RouterLink
             >
+
           </li>
         </ul>
         <form class="d-flex" role="search">
-          <button
+          <RouterLink
             class="btn btn-outline-secondary"
-            type="button"
+            to="/sign-out"
             @click.prevent="signOut"
+            >登出系統</RouterLink
           >
-            登出系統
-          </button>
         </form>
       </div>
     </div>

@@ -1,12 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AdminView from "../views/AdminView.vue";
 import GpsView from "../views/GpsView.vue";
+import ChangePassword from "../views/ChangePassword.vue";
 import CodeReader from "../views/CodeReader.vue";
 import TwoDCode from "../views/TwoDCode.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/sign-out",
+      redirect: "/",
+    },
     {
       path: "/",
       name: "home",
@@ -15,6 +20,11 @@ const router = createRouter({
       path: "/admin",
       component: AdminView,
       name: "admin",
+    },
+    {
+      path: "/change-password",
+      component: ChangePassword,
+      name: "ChangPassword",
     },
     {
       path: "/gps",

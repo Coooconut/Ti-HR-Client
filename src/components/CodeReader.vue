@@ -21,7 +21,6 @@ const toasterInfo = createToaster({
 
 export default {
   components: { QrcodeStream },
-
   data() {
     return {
       result: null,
@@ -71,6 +70,8 @@ export default {
       })
         .then((res) => res.json())
         .then((res) => {
+          console.log(this.token);
+          console.log(this.result);
           toasterInfo.show(res.message);
         })
         .catch((err) => console.error(err));
