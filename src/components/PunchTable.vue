@@ -1,12 +1,18 @@
 <template>
   <h1>人資專區</h1>
   <div class="tools">
-    <button class="btn btn-primary mb-3" @click="getPunches">
+    <button class="btn btn-primary mb-3" @click.prevent="getPunches">
       查閱打卡記錄
     </button>
   </div>
   <!-- 出勤記錄表 -->
-  <div class="punch-table">
+  <div class="punch-table" v-if="this.page !== null">
+    <button
+      class="mx-5 btn btn-secondary position-absolute end-0"
+      @click.prevent="closePunchTable"
+    >
+      關閉表單
+    </button>
     <h3>出勤記錄表</h3>
     <table class="table table-striped">
       <thead>
@@ -36,14 +42,14 @@
               改為到勤
             </button>
           </td>
-          <td>{{ punch.in }}</td>
-          <td>{{ punch.out }}</td>
+          <td>{{ punch.createdAt }}</td>
+          <td>{{ punch.updatedAt }}</td>
         </tr>
       </tbody>
     </table>
   </div>
   <!-- Pagination -->
-  <div class="container">
+  <div class="container" v-if="this.page !== null">
     <paginate
       v-model="page"
       :page-count="page_sum"
@@ -60,6 +66,7 @@
 import Paginate from "vuejs-paginate-next";
 import { mapStores } from "pinia";
 import useAuthStore from "../stores/auth";
+import useFormStore from "../stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 
 const toasterError = createToaster({
@@ -81,6 +88,7 @@ export default {
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useAuthStore),
+    ...mapStores(useFormStore),
   },
   props: [],
   data() {
@@ -114,6 +122,7 @@ export default {
           toasterInfo.show(res.message);
           this.count = res.count;
           this.data = res.data;
+          this.page = 1;
           this.page_sum = Math.ceil(this.count / 10);
         })
         .catch((err) => {
@@ -151,6 +160,9 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+    closePunchTable() {
+      this.page = null;
     },
   },
 };
