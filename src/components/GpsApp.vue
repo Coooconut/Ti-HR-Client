@@ -1,6 +1,5 @@
 <template>
   <div class="gps-app">
-    <button class="btn btn-primary">確認現在位置</button>
     <button
       class="btn btn-success"
       @click.prevent="userPosition(distanceCalculator)"
