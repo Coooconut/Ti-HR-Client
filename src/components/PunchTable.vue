@@ -6,7 +6,7 @@
     </button>
   </div>
   <!-- 出勤記錄表 -->
-  <div class="punch-table" v-if="this.page !== null">
+  <div class="punch-table" v-if="this.data !== null">
     <button
       class="mx-5 btn btn-secondary position-absolute end-0"
       @click.prevent="closePunchTable"
@@ -49,14 +49,14 @@
     </table>
   </div>
   <!-- Pagination -->
-  <div class="container" v-if="this.page !== null">
+  <div class="container" v-if="this.data !== null">
     <paginate
       v-model="page"
       :page-count="page_sum"
       :page-range="20"
       :click-handler="getPunches"
-      :prev-text="'Prev'"
-      :next-text="'Next'"
+      :prev-text="'上一頁'"
+      :next-text="'下一頁'"
       :container-class="'pagination'"
     ></paginate>
   </div>
@@ -68,6 +68,7 @@ import { mapStores } from "pinia";
 import useAuthStore from "../stores/auth";
 import useFormStore from "../stores/form";
 import { createToaster } from "@meforma/vue-toaster";
+import dayjs from "dayjs";
 
 const toasterError = createToaster({
   type: "error",
@@ -96,7 +97,7 @@ export default {
       count: null,
       data: null,
       page: null,
-      page_current: 1,
+      page_current: null,
       page_sum: null,
     };
   },
@@ -118,11 +119,21 @@ export default {
       )
         .then((res) => res.json())
         .then((res) => {
+          console.log(res.data);
+          res.data.forEach((element) => {
+            console.log(element.updatedAt);
+            element.updatedAt = dayjs(element.updatedAt)
+              .subtract(12, "h")
+              .format("hh:mm:ss");
+            element.createdAt = dayjs(element.createdAt)
+              .subtract(12, "h")
+              .format("hh:mm:ss");
+          });
           this.response = res;
           toasterInfo.show(res.message);
           this.count = res.count;
           this.data = res.data;
-          this.page = 1;
+          this.page = this.page_current;
           this.page_sum = Math.ceil(this.count / 10);
         })
         .catch((err) => {
