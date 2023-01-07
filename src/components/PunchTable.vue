@@ -14,6 +14,15 @@
       關閉表單
     </button>
     <h3>出勤記錄表</h3>
+    <select
+      class="form-select"
+      aria-label="Change search criteria"
+      @change="punchesOption"
+    >
+      <option selected>請選擇檢索條件（預設檢索所有記錄）</option>
+      <option value="all">顯示所有記錄</option>
+      <option value="absence">只顯示缺勤記錄</option>
+    </select>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -99,15 +108,17 @@ export default {
       page: null,
       page_current: null,
       page_sum: null,
+      option: "all",
     };
   },
   methods: {
-    getPunches() {
+    getPunches(option) {
       this.page_current = this.page;
       fetch(
         `${import.meta.env.VITE_BASE_URL}/api/punches?` +
           new URLSearchParams({
             page: this.page_current,
+            option: this.option,
           }),
         {
           method: "GET",
@@ -174,6 +185,10 @@ export default {
     },
     closePunchTable() {
       this.page = null;
+    },
+    punchesOption() {
+      this.option = event.target.value;
+      this.getPunches(this.option);
     },
   },
 };
