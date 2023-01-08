@@ -41,7 +41,6 @@ const toasterInfo = createToaster({
 
 export default {
   name: "SignInForm",
-  props: ["response"],
   data() {
     return {
       // 資料驗證的 schema
