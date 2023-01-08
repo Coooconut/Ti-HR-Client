@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import AdminView from "../views/AdminView.vue";
 import GpsView from "../views/GpsView.vue";
 import PersonalPage from "../views/PersonalPage.vue";
@@ -6,7 +6,7 @@ import CodeReader from "../views/CodeReader.vue";
 import TwoDCode from "../views/TwoDCode.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/sign-out",
