@@ -22,6 +22,13 @@
 </template>
 
 <script>
+import { createToaster } from "@meforma/vue-toaster";
+const toasterInfo = createToaster({
+  type: "info",
+  position: "top",
+  duration: 5000,
+});
+
 export default {
   name: "GoogleMap",
   data() {
@@ -56,32 +63,20 @@ export default {
       };
     },
     findUser() {
-      fetch(
-        `https://www.googleapis.com/geolocation/v1/geolocate?key=
-        ${import.meta.env.VITE_GOOGLE_MAP_API_KEY}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          this.center = {
-            lat: res.location.lat,
-            lng: res.location.lng,
-          };
-          this.markers[1].position = {
-            lat: res.location.lat,
-            lng: res.location.lng,
-          };
-        })
-        .catch((err) => {
-          console.error(err);
+      toasterInfo.show("定位中，請耐心等候結果。");
+      const promise = new Promise(function (resolve) {
+        // 使用瀏覽器的定位功能
+        navigator.geolocation.getCurrentPosition(function (position) {
+          const latlng1 = position.coords.latitude;
+          const latlng2 = position.coords.longitude;
+          resolve({ lat: latlng1, lng: latlng2 });
         });
+      });
+      promise.then((res) => {
+        this.center = res;
+        this.markers[1].position = res;
+        toasterInfo.show("定位程序結束");
+      });
     },
   },
 };
