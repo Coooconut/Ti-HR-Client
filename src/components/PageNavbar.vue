@@ -40,10 +40,10 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="code-reader">掃碼打卡</RouterLink>
           </li>
-          <!-- 更改密碼 -->
+          <!-- 個人頁面 -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="change-password"
-              >更改密碼</RouterLink
+              >個人頁面</RouterLink
             >
 
           </li>

@@ -1,10 +1,10 @@
 <template>
   <h1>人資專區</h1>
   <div class="tools">
-    <button class="btn btn-primary mb-3" @click.prevent="getPunches">
+    <button class="btn btn-primary mb-3 mx-2" @click.prevent="getPunches">
       查閱打卡記錄
     </button>
-    <button class="btn btn-primary mb-3" @click.prevent="getEmployees">
+    <button class="btn btn-primary mb-3 mx-2" @click.prevent="getEmployees">
       查閱員工名單
     </button>
   </div>
@@ -328,6 +328,7 @@ export default {
     },
     closePunchTable() {
       this.punchTable.data = null;
+      this.punchTable.option = "all";
     },
     punchesOption() {
       this.punchTable.option = event.target.value;
