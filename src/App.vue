@@ -12,16 +12,9 @@
     <header v-if="this.authStore.user !== null">
       <h4>{{ this.authStore.user.fullName }}你好。今天也是個美好的一天。</h4>
     </header>
-    <!-- <div name="dev">
-      <h1>{{ message }}</h1>
-      <p>App.vue.response: {{ response }}</p>
-      <p>App.vue.ip: {{ user_ip }}</p>
-      <p>auth.token = {{ this.authStore.token }}</p>
-    </div> -->
     <!-- 登入表單 -->
     <sign-in-form
-      v-if="this.token === null"
-      :response="response"
+      v-if="this.authStore.user === null"
       @emit-sign-in="signIn"
     ></sign-in-form>
   </main>
@@ -61,8 +54,6 @@ export default {
       distance: null,
       employee_id: null,
       full_name: null,
-      message: null,
-      response: null,
       token: null,
       two_d_code: null,
       user_ip: null,
@@ -88,8 +79,6 @@ export default {
       )
         .then((res) => res.json())
         .then((res) => {
-          this.response = res;
-          this.message = res.message;
           this.count = res.count;
           this.data = res.data;
           this.page_sum = Math.ceil(this.count / 10);
@@ -101,7 +90,9 @@ export default {
         .then(({ ip }) => {
           console.log(ip);
           this.user_ip = ip;
-          this.show2dCode();
+          if (!this.authStore.twoDCode) {
+            this.show2dCode();
+          }
         });
     },
     show2dCode() {
@@ -110,7 +101,7 @@ export default {
           method: "POST",
           headers: {
             Accept: "application/json",
-            Authorization: `Bearer ${this.token}`,
+            Authorization: `Bearer ${this.authStore.token}`,
             "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
           },
           body: `userIP=${this.user_ip}`,
@@ -120,9 +111,8 @@ export default {
           })
           .then((res) => {
             this.two_d_code = res.punchCode;
-            this.authStore.twoDCode = res.punchCode;
+            this.authStore.twoDCode = this.authStore.twoDCode || res.punchCode;
             toasterInfo.show(res.message);
-            this.response = res;
           })
           .catch((err) => {
             console.error(err);
@@ -132,8 +122,6 @@ export default {
     signIn(res) {
       this.employee_id = res.data.employee.code;
       this.full_name = res.data.employee.fullName;
-      // toasterInfo.show(res.message);
-      this.response = res;
       this.token = res.data.token;
       this.authStore.token = res.data.token;
       this.authStore.user = res.data.employee;

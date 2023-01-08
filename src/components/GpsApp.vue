@@ -32,29 +32,19 @@ function userPosition(cb) {
   if (!auth.token) {
     toasterError.show("你尚未登入，登入後才能打卡。");
   } else if (auth.token) {
-    fetch(
-      `https://www.googleapis.com/geolocation/v1/geolocate?key=
-        ${import.meta.env.VITE_GOOGLE_MAP_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        return res.json();
-      })
-      .then((res) => {
-        response.value = res;
-        cb(res.location.lat, res.location.lng);
-      })
-      .catch((err) => {
-        console.error(err);
+    const promise = new Promise(function (resolve) {
+      // 使用瀏覽器的定位功能
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const latlng1 = position.coords.latitude;
+        const latlng2 = position.coords.longitude;
+        resolve([latlng1, latlng2]);
       });
+    });
+    promise.then((res) => {
+      cb(res[0], res[1]);
+    });
   }
 }
-
 /*
 function distanceCalculator 功能：檢查打卡地點與公司距離
 本專案使用 Google Distance Matrix Service API
@@ -87,6 +77,7 @@ async function distanceCalculator(latlng1, latlng2) {
     );
     window.distanceUnit =
       response.rows[0].elements[1].distance.text.split(" ")[1];
+    console.info(window.distanceNumber, window.distanceUnit);
   }
   if (
     (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||

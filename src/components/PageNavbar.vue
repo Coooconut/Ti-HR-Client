@@ -16,7 +16,7 @@
       <div
         class="collapse navbar-collapse"
         id="navbarSupportedContent"
-        v-if="token !== null"
+        v-if="auth.user !== null"
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <!-- GPS 按鈕打卡 -->
@@ -40,12 +40,11 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="code-reader">掃碼打卡</RouterLink>
           </li>
-          <!-- 更改密碼 -->
+          <!-- 個人頁面 -->
           <li class="nav-item">
-            <RouterLink class="nav-link" to="change-password"
-              >更改密碼</RouterLink
+            <RouterLink class="nav-link" to="personal-page"
+              >個人頁面</RouterLink
             >
-
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -71,6 +70,11 @@ import { RouterLink } from "vue-router";
 export default {
   name: "PageNavbar",
   props: ["employee_id", "token"],
+  data() {
+    return {
+      auth: useAuthStore(),
+    };
+  },
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useFormStore),
@@ -92,9 +96,8 @@ export default {
       this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
     },
     signOut() {
-      const auth = useAuthStore();
-      if (auth.token) {
-        auth.token = null;
+      if (this.auth.token) {
+        this.auth.token = null;
         this.$emit("emit-sign-out");
       }
     },

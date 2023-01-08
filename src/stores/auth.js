@@ -6,4 +6,5 @@ export default defineStore("auth", {
     token: null,
     twoDCode: null,
   }),
+  persist: true,
 });
