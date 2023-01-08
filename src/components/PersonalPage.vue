@@ -135,7 +135,7 @@ const toasterInfo = createToaster({
 });
 
 export default {
-  name: "ChangPasswordForm",
+  name: "PersonalPage",
   props: ["response", "token"],
   data() {
     return {

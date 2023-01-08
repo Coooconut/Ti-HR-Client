@@ -42,10 +42,9 @@
           </li>
           <!-- 個人頁面 -->
           <li class="nav-item">
-            <RouterLink class="nav-link" to="change-password"
+            <RouterLink class="nav-link" to="personal-page"
               >個人頁面</RouterLink
             >
-
           </li>
         </ul>
         <form class="d-flex" role="search">

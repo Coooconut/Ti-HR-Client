@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AdminView from "../views/AdminView.vue";
 import GpsView from "../views/GpsView.vue";
-import ChangePassword from "../views/ChangePassword.vue";
+import PersonalPage from "../views/PersonalPage.vue";
 import CodeReader from "../views/CodeReader.vue";
 import TwoDCode from "../views/TwoDCode.vue";
 
@@ -19,17 +19,17 @@ const router = createRouter({
     {
       path: "/admin",
       component: AdminView,
-      name: "admin",
+      name: "AdminView",
     },
     {
-      path: "/change-password",
-      component: ChangePassword,
-      name: "ChangPassword",
+      path: "/personal-page",
+      component: PersonalPage,
+      name: "PersonalPage",
     },
     {
       path: "/gps",
       component: GpsView,
-      name: "gps",
+      name: "GpsView",
     },
     {
       path: "/code-reader",
