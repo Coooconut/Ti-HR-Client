@@ -1,9 +1,9 @@
 <template>
   <div id="button-container">
-    <button class="btn btn-primary" @click.prevent="findUser">
+    <button class="btn btn-primary mx-2 mb-3" @click.prevent="findUser">
       確認現在位置
     </button>
-    <button class="btn btn-warning" @click.prevent="findCompany">
+    <button class="btn btn-warning mx-2 mb-3" @click.prevent="findCompany">
       確認公司位置
     </button>
   </div>

@@ -235,14 +235,10 @@ export default {
       )
         .then((res) => res.json())
         .then((res) => {
-          // 將遠端資料庫儲存的時間轉換為台灣時間
+          // 將資料庫儲存的時間轉換為易讀格式
           res.data.forEach((element) => {
-            element.updatedAt = dayjs(element.updatedAt)
-              .subtract(12, "h")
-              .format("hh:mm:ss");
-            element.createdAt = dayjs(element.createdAt)
-              .subtract(12, "h")
-              .format("hh:mm:ss");
+            element.createdAt = dayjs(element.createdAt).format("HH:mm:ss");
+            element.updatedAt = dayjs(element.updatedAt).format("HH:mm:ss");
           });
           toasterInfo.show(res.message);
           this.punchTable.count = res.count;
@@ -330,6 +326,7 @@ export default {
       this.punchTable.data = null;
       this.punchTable.option = "all";
     },
+    // 傳遞查閱打卡記錄的條件
     punchesOption() {
       this.punchTable.option = event.target.value;
       this.getPunches(this.punchTable.option);

@@ -1,10 +1,16 @@
 <template>
   <div class="gps-app">
     <button
-      class="btn btn-success"
+      class="btn btn-success mt-3"
       @click.prevent="userPosition(distanceCalculator)"
     >
       打卡
+    </button>
+    <button
+      class="btn btn-danger mx-5 mt-3"
+      @click.prevent="userPosition(distanceCalculatorCheat)"
+    >
+      Demo 專用打卡
     </button>
   </div>
 </template>
@@ -56,6 +62,46 @@ async function distanceCalculator(latlng1, latlng2) {
   var origin1 = new google.maps.LatLng(
     import.meta.env.VITE_LATLNG_TITAN_1,
     import.meta.env.VITE_LATLNG_TITAN_2
+  );
+  var origin2 = "Taiwan";
+  var destinationA = "Taiwan";
+  var destinationB = new google.maps.LatLng(latlng1, latlng2);
+
+  var service = new google.maps.DistanceMatrixService();
+  await service.getDistanceMatrix(
+    {
+      origins: [origin1, origin2],
+      destinations: [destinationA, destinationB],
+      travelMode: "DRIVING",
+      unitSystem: google.maps.UnitSystem.METRIC,
+    },
+    callback
+  );
+  function callback(response) {
+    window.distanceNumber = Number(
+      response.rows[0].elements[1].distance.text.split(" ")[0]
+    );
+    window.distanceUnit =
+      response.rows[0].elements[1].distance.text.split(" ")[1];
+    console.info(window.distanceNumber, window.distanceUnit);
+  }
+  if (
+    (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||
+    (window.distanceNumber <= 0.4 && window.distanceUnit === "公里")
+  ) {
+    gpsPunch();
+  } else {
+    toasterError.show(
+      "你與公司的距離大於 400 公尺，或者無法確認，因此不能打卡。"
+    );
+  }
+}
+// Demo 專用方法
+async function distanceCalculatorCheat(latlng1, latlng2) {
+  // origins (必要)：計算距離和時間時要做為起點的陣列，在此假設為公司所在經緯度。
+  var origin1 = new google.maps.LatLng(
+    import.meta.env.VITE_LATLNG_HOME_1,
+    import.meta.env.VITE_LATLNG_HOME_2
   );
   var origin2 = "Taiwan";
   var destinationA = "Taiwan";

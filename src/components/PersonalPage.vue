@@ -68,7 +68,6 @@
     </div>
   </div>
   <!-- 更改密碼表單 -->
-
   <vee-form
     v-bind:validation-schema="schema"
     v-on:submit="changPassword"
@@ -123,10 +122,12 @@
 </template>
 
 <script>
+import Paginate from "vuejs-paginate-next";
 import { mapState, mapStores } from "pinia";
 import useFormStore from "@/stores/form";
 import useAuthStore from "@/stores/auth";
 import { createToaster } from "@meforma/vue-toaster";
+import dayjs from "dayjs";
 
 const toasterInfo = createToaster({
   type: "info",
@@ -136,6 +137,9 @@ const toasterInfo = createToaster({
 
 export default {
   name: "PersonalPage",
+  components: {
+    Paginate,
+  },
   props: ["response", "token"],
   data() {
     return {
@@ -159,8 +163,8 @@ export default {
   },
   emits: ["emit-change-password"],
   methods: {
+    // 使用者可以更改登入密碼
     changPassword(values) {
-      // const auth = useAuthStore();
       fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/password`, {
         method: "PUT",
         headers: {
@@ -179,6 +183,7 @@ export default {
           console.error(err);
         });
     },
+    // 使用者可以查閱自己的打卡記錄
     getMyPunches(option) {
       this.punchTable.page_current = this.punchTable.page;
       fetch(
@@ -199,7 +204,11 @@ export default {
       )
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
+          // 將資料庫儲存的時間轉換為易讀格式
+          res.data.forEach((element) => {
+            element.createdAt = dayjs(element.createdAt).format("HH:mm:ss");
+            element.updatedAt = dayjs(element.updatedAt).format("HH:mm:ss");
+          });
           toasterInfo.show(res.message);
           this.punchTable.count = res.count;
           this.punchTable.data = res.data;
@@ -220,6 +229,7 @@ export default {
     openChangePasswordForm() {
       this.passwordForm = "open";
     },
+    // 傳遞查閱打卡記錄的條件
     punchesOption() {
       this.punchTable.option = event.target.value;
       this.getMyPunches(this.punchTable.option);
@@ -233,3 +243,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.container {
+  display: flex;
+  justify-content: center;
+}
+</style>
