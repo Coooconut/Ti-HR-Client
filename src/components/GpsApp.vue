@@ -1,11 +1,15 @@
 <template>
   <div class="gps-app">
     <button
-      class="btn btn-success"
+      class="btn btn-success mt-3"
       @click.prevent="userPosition(distanceCalculator)"
     >
       打卡
     </button>
+  </div>
+  <div class="spinner mt-2" v-if="process.loadingGpsPunch === true">
+    <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
+    <span>打卡程序處理中，請暫時停止任何操作。</span>
   </div>
 </template>
 
@@ -13,7 +17,9 @@
 import { ref } from "vue";
 import { createToaster } from "@meforma/vue-toaster";
 import useAuthStore from "../stores/auth";
+import useProcessStore from "../stores/process";
 const auth = useAuthStore();
+const process = useProcessStore();
 const toasterError = createToaster({
   type: "error",
   position: "top",
@@ -29,6 +35,12 @@ let response = ref(null);
 
 // 偵測使用者所在位置，回呼函式代入計算所在位置與公司距離的函式 distanceCalculator()
 function userPosition(cb) {
+  if ("geolocation" in navigator) {
+    process.loadingGpsPunch = true;
+  } else {
+    alert("你的裝置或瀏覽器不支援GPS定位");
+    return (process.loadingGpsPunch = false);
+  }
   if (!auth.token) {
     toasterError.show("你尚未登入，登入後才能打卡。");
   } else if (auth.token) {
@@ -40,9 +52,14 @@ function userPosition(cb) {
         resolve([latlng1, latlng2]);
       });
     });
-    promise.then((res) => {
-      cb(res[0], res[1]);
-    });
+    promise
+      .then((res) => {
+        cb(res[0], res[1]);
+      })
+      .catch((err) => {
+        process.loadingGpsPunch = false;
+        console.error(err);
+      });
   }
 }
 /*
@@ -85,6 +102,7 @@ async function distanceCalculator(latlng1, latlng2) {
   ) {
     gpsPunch();
   } else {
+    process.loadingGpsPunch = false;
     toasterError.show(
       "你與公司的距離大於 400 公尺，或者無法確認，因此不能打卡。"
     );
@@ -103,9 +121,11 @@ function gpsPunch() {
       return res.json();
     })
     .then((res) => {
+      process.loadingGpsPunch = false;
       toasterInfo.show(res.message);
     })
     .catch((err) => {
+      process.loadingGpsPunch = false;
       console.error(err);
     });
 }

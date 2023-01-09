@@ -1,11 +1,15 @@
 <template>
   <div id="button-container">
-    <button class="btn btn-primary" @click.prevent="findUser">
+    <button class="btn btn-primary mx-2 mb-2" @click.prevent="findUser">
       確認現在位置
     </button>
-    <button class="btn btn-warning" @click.prevent="findCompany">
+    <button class="btn btn-warning mx-2 mb-2" @click.prevent="findCompany">
       確認公司位置
     </button>
+  </div>
+  <div class="spinner mb-3" v-if="this.process.loadingUserPosition === true">
+    <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
+    <span>正在定位，請暫時停止任何操作。</span>
   </div>
   <GMapMap
     :center="center"
@@ -22,7 +26,9 @@
 </template>
 
 <script>
+import useProcessStore from "../stores/process";
 import { createToaster } from "@meforma/vue-toaster";
+
 const toasterInfo = createToaster({
   type: "info",
   position: "top",
@@ -53,6 +59,7 @@ export default {
           },
         },
       ],
+      process: useProcessStore(),
     };
   },
   methods: {
@@ -63,7 +70,7 @@ export default {
       };
     },
     findUser() {
-      toasterInfo.show("定位中，請耐心等候結果。");
+      this.process.loadingUserPosition = true;
       const promise = new Promise(function (resolve) {
         // 使用瀏覽器的定位功能
         navigator.geolocation.getCurrentPosition(function (position) {
@@ -72,11 +79,16 @@ export default {
           resolve({ lat: latlng1, lng: latlng2 });
         });
       });
-      promise.then((res) => {
-        this.center = res;
-        this.markers[1].position = res;
-        toasterInfo.show("定位程序結束");
-      });
+      promise
+        .then((res) => {
+          this.center = res;
+          this.markers[1].position = res;
+          this.process.loadingUserPosition = false;
+        })
+        .catch((err) => {
+          this.process.loadingUserPosition = false;
+          console.error(err);
+        });
     },
   },
 };

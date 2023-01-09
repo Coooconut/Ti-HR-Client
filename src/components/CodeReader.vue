@@ -3,6 +3,13 @@
     <p class="error">{{ error }}</p>
     <div class="result-container">
       <p class="decode-result">最近的掃碼結果：{{ result }}</p>
+      <div
+        class="spinner mt-2"
+        v-if="this.processStore.loading2DCodePunch === true"
+      >
+        <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
+        <span>打卡程序處理中，請暫時停止任何操作。</span>
+      </div>
     </div>
     <qrcode-stream @decode="onDecode" @init="onInit" />
   </div>
@@ -10,7 +17,9 @@
 
 <script>
 import { QrcodeStream } from "vue-qrcode-reader";
+import { mapStores } from "pinia";
 import useAuthStore from "@/stores/auth";
+import useProcessStore from "@/stores/process";
 import { createToaster } from "@meforma/vue-toaster";
 
 const toasterInfo = createToaster({
@@ -21,17 +30,20 @@ const toasterInfo = createToaster({
 
 export default {
   components: { QrcodeStream },
+  computed: {
+    // mapStores 需搭配展開運算子，引數代入 store。
+    ...mapStores(useAuthStore),
+    ...mapStores(useProcessStore),
+  },
   data() {
     return {
       result: null,
       error: null,
-      token: null,
     };
   },
   methods: {
     onDecode(result) {
-      const auth = useAuthStore();
-      this.token = auth.token;
+      this.processStore.loading2DCodePunch = true;
       this.result = result;
       this.tweDCodePunch();
     },
@@ -39,6 +51,7 @@ export default {
       try {
         await promise;
       } catch (error) {
+        this.processStore.loading2DCodePunch = false;
         if (error.name === "NotAllowedError") {
           this.error = "無法掃碼：你必須授權使用攝影鏡頭才可掃描二維碼。";
         } else if (error.name === "NotFoundError") {
@@ -64,17 +77,19 @@ export default {
       fetch(this.result, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          Authorization: `Bearer ${this.authStore.token}`,
           "Content-Type": "application/json",
         },
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(this.token);
-          console.log(this.result);
+          this.processStore.loading2DCodePunch = false;
           toasterInfo.show(res.message);
         })
-        .catch((err) => console.error(err));
+        .catch((err) => {
+          this.processStore.loading2DCodePunch = false;
+          console.error(err);
+        });
     },
   },
 };
