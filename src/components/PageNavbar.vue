@@ -65,6 +65,7 @@
 import { mapStores } from "pinia";
 import useFormStore from "@/stores/form";
 import useAuthStore from "@/stores/auth";
+import useProcessStore from "@/stores/process";
 import { RouterLink } from "vue-router";
 
 export default {
@@ -73,6 +74,7 @@ export default {
   data() {
     return {
       auth: useAuthStore(),
+      process: useProcessStore(),
     };
   },
   computed: {
@@ -82,9 +84,10 @@ export default {
   emits: ["emit-get-user-ip", "emit-sign-out"],
   methods: {
     toggle2dCode() {
-      this.$emit("emit-get-user-ip");
-      // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
-      this.formStore.isOpen2dCode = !this.formStore.isOpen2dCode;
+      if (this.auth.twoDCode === null) {
+        this.process.loading2DCode = true;
+        this.$emit("emit-get-user-ip");
+      }
     },
     toggleChangePasswordForm() {
       // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。

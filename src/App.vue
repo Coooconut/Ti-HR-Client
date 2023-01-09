@@ -25,6 +25,7 @@
 import { RouterLink, RouterView } from "vue-router";
 import { mapStores } from "pinia";
 import useAuthStore from "./stores/auth";
+import useProcessStore from "./stores/process";
 import { createToaster } from "@meforma/vue-toaster";
 import PageNavbar from "./components/PageNavbar.vue";
 import SignInForm from "./components/SignInForm.vue";
@@ -44,6 +45,7 @@ export default {
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useAuthStore),
+    ...mapStores(useProcessStore),
   },
   data() {
     return {
@@ -55,7 +57,7 @@ export default {
       employee_id: null,
       full_name: null,
       token: null,
-      two_d_code: null,
+      // two_d_code: null,
       user_ip: null,
       user_latlng_1: null,
       user_latlng_2: null,
@@ -93,10 +95,14 @@ export default {
           if (!this.authStore.twoDCode) {
             this.show2dCode();
           }
+        })
+        .catch((err) => {
+          this.processStore.loading2DCode = false;
+          console.error(err);
         });
     },
     show2dCode() {
-      if (!this.two_d_code) {
+      if (!this.authStore.twoDCode) {
         fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/2d_code_auth`, {
           method: "POST",
           headers: {
@@ -112,9 +118,10 @@ export default {
           .then((res) => {
             this.two_d_code = res.punchCode;
             this.authStore.twoDCode = this.authStore.twoDCode || res.punchCode;
-            toasterInfo.show(res.message);
+            this.processStore.loading2DCode = false;
           })
           .catch((err) => {
+            this.processStore.loading2DCode = false;
             console.error(err);
           });
       }
