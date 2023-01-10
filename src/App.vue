@@ -1,8 +1,6 @@
 <template>
   <!-- Page Navbar -->
   <page-navbar
-    :token="token"
-    :employee_id="employee_id"
     @emit-get-user-ip="getUserIP"
     @emit-sign-out="signOut"
   ></page-navbar>
@@ -22,7 +20,6 @@
 </template>
 
 <script>
-import { RouterLink, RouterView } from "vue-router";
 import { mapStores } from "pinia";
 import useAuthStore from "./stores/auth";
 import useProcessStore from "./stores/process";
@@ -49,48 +46,14 @@ export default {
   },
   data() {
     return {
-      count: null,
-      page_current: 1,
-      page_sum: null,
-      data: null,
-      distance: null,
-      employee_id: null,
-      full_name: null,
-      token: null,
-      // two_d_code: null,
       user_ip: null,
-      user_latlng_1: null,
-      user_latlng_2: null,
     };
   },
   methods: {
-    getPunches() {
-      this.page_current = this.page;
-      fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/punches?` +
-          new URLSearchParams({
-            page: this.page_current,
-          }),
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          this.count = res.count;
-          this.data = res.data;
-          this.page_sum = Math.ceil(this.count / 10);
-        });
-    },
     getUserIP() {
       fetch("https://api.ipify.org?format=json")
         .then((res) => res.json())
         .then(({ ip }) => {
-          console.log(ip);
           this.user_ip = ip;
           if (!this.authStore.twoDCode) {
             this.show2dCode();
@@ -127,16 +90,13 @@ export default {
       }
     },
     signIn(res) {
-      this.employee_id = res.data.employee.code;
-      this.full_name = res.data.employee.fullName;
-      this.token = res.data.token;
       this.authStore.token = res.data.token;
       this.authStore.user = res.data.employee;
     },
     signOut() {
-      this.token = null;
       this.authStore.twoDCode = null;
       this.authStore.user = null;
+      this.authStore.token = null;
       toasterInfo.show("你已登出系統");
     },
   },

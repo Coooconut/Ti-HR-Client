@@ -67,7 +67,6 @@ import { RouterLink } from "vue-router";
 
 export default {
   name: "PageNavbar",
-  props: ["employee_id", "token"],
   data() {
     return {
       auth: useAuthStore(),

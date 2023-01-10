@@ -7,5 +7,4 @@ export default defineStore("process", {
     loading2DCode: false,
     loading2DCodePunch: false,
   }),
-  persist: true,
 });
