@@ -42,17 +42,20 @@ export default {
     };
   },
   methods: {
+    // 掃碼儀解碼
     onDecode(result) {
       this.processStore.loading2DCodePunch = true;
       this.result = result;
       this.tweDCodePunch();
     },
+    // 啟用掃碼儀
     async onInit(promise) {
       try {
         await promise;
       } catch (error) {
         this.processStore.loading2DCodePunch = false;
         if (error.name === "NotAllowedError") {
+          // 現階段只將兩種常見的錯誤訊息中文化，剩餘的未來有時間再翻譯。
           this.error = "無法掃碼：你必須授權使用攝影鏡頭才可掃描二維碼。";
         } else if (error.name === "NotFoundError") {
           this.error = "無法掃碼：你的裝置沒有攝影鏡頭，無法掃描二維碼。";
@@ -72,7 +75,7 @@ export default {
         }
       }
     },
-    // GET /api/punches/:encrypted_value
+    // GET /api/punches/:encrypted_value 以掃描二維碼取得的網址發出打卡請求
     tweDCodePunch() {
       fetch(this.result, {
         method: "GET",

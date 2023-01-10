@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import { mapState, mapStores } from "pinia";
-import useFormStore from "@/stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 
 const toasterInfo = createToaster({
@@ -71,12 +69,6 @@ export default {
           console.error(err);
         });
     },
-  },
-  computed: {
-    // mapStores 需搭配展開運算子，引數代入 store。
-    ...mapStores(useFormStore),
-    // 代入 store 以及 getters，如此兩者可在任意元件中使用
-    ...mapState(useFormStore, ["hiddenClassSignInForm"]),
   },
 };
 </script>

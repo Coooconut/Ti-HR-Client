@@ -3,7 +3,7 @@
     <h3 class="hint">你的打卡二維碼</h3>
     <div class="spinner mt-2" v-if="process.loading2DCode === true">
       <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
-      <span>正在取得打卡二維碼，請稍後。</span>
+      <span>正在取得打卡二維碼，請稍候。</span>
     </div>
     <img :src="auth.twoDCode" alt="打卡二維碼" />
   </main>

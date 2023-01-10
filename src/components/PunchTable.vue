@@ -140,7 +140,6 @@
 import Paginate from "vuejs-paginate-next";
 import { mapStores } from "pinia";
 import useAuthStore from "../stores/auth";
-import useFormStore from "../stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
 
@@ -163,7 +162,6 @@ export default {
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useAuthStore),
-    ...mapStores(useFormStore),
   },
   props: [],
   data() {
@@ -216,7 +214,7 @@ export default {
           console.error(err);
         });
     },
-    // 管理員可檢視打卡記錄
+    // 管理員可檢視打卡記錄。option 由函式 punchesOption() 傳遞
     getPunches(option) {
       this.punchTable.page_current = this.punchTable.page;
       fetch(

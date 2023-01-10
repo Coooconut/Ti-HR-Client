@@ -9,7 +9,10 @@
   </div>
   <div class="spinner mb-3" v-if="this.process.loadingUserPosition === true">
     <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
-    <span>正在定位，請暫時停止任何操作。</span>
+    <span
+      >正在定位，請暫時停止任何操作。如果等候時間過久，可能是你未授權本網站定位，
+      請檢查瀏覽器設定。</span
+    >
   </div>
   <GMapMap
     :center="center"
@@ -63,12 +66,14 @@ export default {
     };
   },
   methods: {
+    // 將地圖中心點重置為公司所在地
     findCompany() {
       this.center = {
         lat: 25.05756263191021,
         lng: 121.61238726873873,
       };
     },
+    // 將地圖中心點設置為使用者所在地
     findUser() {
       this.process.loadingUserPosition = true;
       const promise = new Promise(function (resolve) {

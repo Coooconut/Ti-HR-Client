@@ -9,12 +9,14 @@
   </div>
   <div class="spinner mt-2" v-if="process.loadingGpsPunch === true">
     <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
-    <span>打卡程序處理中，請暫時停止任何操作。</span>
+    <span
+      >打卡程序處理中，請暫時停止任何操作。如果等候時間過久，可能是你未授權本網站定位，
+      請檢查瀏覽器設定。</span
+    >
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { createToaster } from "@meforma/vue-toaster";
 import useAuthStore from "../stores/auth";
 import useProcessStore from "../stores/process";
@@ -30,8 +32,6 @@ const toasterInfo = createToaster({
   position: "top",
   duration: 8000,
 });
-
-let response = ref(null);
 
 // 偵測使用者所在位置，回呼函式代入計算所在位置與公司距離的函式 distanceCalculator()
 function userPosition(cb) {
@@ -54,6 +54,7 @@ function userPosition(cb) {
     });
     promise
       .then((res) => {
+        // 將使者所在地的緯度、經度傳給回呼函式 distanceCalculator()
         cb(res[0], res[1]);
       })
       .catch((err) => {
@@ -66,7 +67,7 @@ function userPosition(cb) {
 function distanceCalculator 功能：檢查打卡地點與公司距離
 本專案使用 Google Distance Matrix Service API
 Google 官方文件：https://developers.google.com/maps/documentation/javascript/distancematrix?hl=zh-tw#distance_matrix_parsing_the_results
-檢查結果若距離小於等於四百公尺，就調用函式 gpsPunch()
+檢查結果若距離小於等於四百公尺，就調用函式 gpsPunch() 發送打卡請求。
 */
 async function distanceCalculator(latlng1, latlng2) {
   // origins (必要)：計算距離和時間時要做為起點的陣列，在此假設為公司所在經緯度。
@@ -100,6 +101,7 @@ async function distanceCalculator(latlng1, latlng2) {
     (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||
     (window.distanceNumber <= 0.4 && window.distanceUnit === "公里")
   ) {
+    // 發送打卡請求
     gpsPunch();
   } else {
     process.loadingGpsPunch = false;

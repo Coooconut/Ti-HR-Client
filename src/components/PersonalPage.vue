@@ -123,8 +123,6 @@
 
 <script>
 import Paginate from "vuejs-paginate-next";
-import { mapState, mapStores } from "pinia";
-import useFormStore from "@/stores/form";
 import useAuthStore from "@/stores/auth";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
@@ -140,7 +138,6 @@ export default {
   components: {
     Paginate,
   },
-  props: ["response", "token"],
   data() {
     return {
       // 資料驗證的 schema
@@ -161,7 +158,6 @@ export default {
       },
     };
   },
-  emits: ["emit-change-password"],
   methods: {
     // 使用者可以更改登入密碼
     changPassword(values) {
@@ -183,7 +179,7 @@ export default {
           console.error(err);
         });
     },
-    // 使用者可以查閱自己的打卡記錄
+    // 使用者可以查閱自己的打卡記錄。option 透過 punchesOption() 傳遞
     getMyPunches(option) {
       this.punchTable.page_current = this.punchTable.page;
       fetch(
@@ -234,12 +230,6 @@ export default {
       this.punchTable.option = event.target.value;
       this.getMyPunches(this.punchTable.option);
     },
-  },
-  computed: {
-    // mapStores 需搭配展開運算子，引數代入 store。
-    ...mapStores(useFormStore),
-    // 代入 store 以及 getters，如此兩者可在任意元件中使用
-    ...mapState(useFormStore, ["hiddenClassChangePasswordForm"]),
   },
 };
 </script>

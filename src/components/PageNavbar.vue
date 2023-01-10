@@ -61,9 +61,6 @@
 </template>
 
 <script>
-// 利用 mapStores 插件將 store 融入元件
-import { mapStores } from "pinia";
-import useFormStore from "@/stores/form";
 import useAuthStore from "@/stores/auth";
 import useProcessStore from "@/stores/process";
 import { RouterLink } from "vue-router";
@@ -77,10 +74,6 @@ export default {
       process: useProcessStore(),
     };
   },
-  computed: {
-    // mapStores 需搭配展開運算子，引數代入 store。
-    ...mapStores(useFormStore),
-  },
   emits: ["emit-get-user-ip", "emit-sign-out"],
   methods: {
     toggle2dCode() {
@@ -88,15 +81,6 @@ export default {
         this.process.loading2DCode = true;
         this.$emit("emit-get-user-ip");
       }
-    },
-    toggleChangePasswordForm() {
-      // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
-      this.formStore.isOpenChangePasswordForm =
-        !this.formStore.isOpenChangePasswordForm;
-    },
-    toggleSignInForm() {
-      // formStore 是 mapStore 創造的屬性，命名原則為 store名稱＋Store。
-      this.formStore.isOpenSignInForm = !this.formStore.isOpenSignInForm;
     },
     signOut() {
       if (this.auth.token) {
