@@ -1,11 +1,11 @@
 <template>
   <main>
-    <PunchTable v-if="auth.user.identity === 'admin'"></PunchTable>
+    <AdminApp v-if="auth.user.identity === 'admin'"></AdminApp>
   </main>
 </template>
 
 <script setup>
-import PunchTable from "../components/PunchTable.vue";
+import AdminApp from "../components/AdminApp.vue";
 import useAuthStore from "../stores/auth";
 
 const auth = useAuthStore();
