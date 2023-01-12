@@ -79,8 +79,9 @@ export default {
             return res.json();
           })
           .then((res) => {
-            this.two_d_code = res.punchCode;
             this.authStore.twoDCode = this.authStore.twoDCode || res.punchCode;
+            this.authStore.twoDCodeDemo =
+              this.authStore.twoDCodeDemo || res.punchCodeDemo;
             this.processStore.loading2DCode = false;
           })
           .catch((err) => {
@@ -95,6 +96,7 @@ export default {
     },
     signOut() {
       this.authStore.twoDCode = null;
+      this.authStore.twoDCodeDemo = null;
       this.authStore.user = null;
       this.authStore.token = null;
       toasterInfo.show("你已登出系統");
