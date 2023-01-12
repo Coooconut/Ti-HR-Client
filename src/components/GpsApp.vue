@@ -1,10 +1,16 @@
 <template>
   <div class="gps-app">
     <button
-      class="btn btn-success mt-3"
+      class="btn btn-success mt-3 mx-2"
       @click.prevent="userPosition(distanceCalculator)"
     >
-      打卡
+      GPS 定位打卡
+    </button>
+    <button
+      class="btn btn-danger mt-3 mx-2"
+      @click.prevent="userPosition(distanceCalculatorDemo)"
+    >
+      Demo 專用打卡（視使用者所在地為公司位置）
     </button>
   </div>
   <div class="spinner mt-2" v-if="process.loadingGpsPunch === true">
@@ -95,7 +101,44 @@ async function distanceCalculator(latlng1, latlng2) {
     );
     window.distanceUnit =
       response.rows[0].elements[1].distance.text.split(" ")[1];
-    console.info(window.distanceNumber, window.distanceUnit);
+  }
+  if (
+    (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||
+    (window.distanceNumber <= 0.4 && window.distanceUnit === "公里")
+  ) {
+    // 發送打卡請求
+    gpsPunch();
+  } else {
+    process.loadingGpsPunch = false;
+    toasterError.show(
+      "你與公司的距離大於 400 公尺，或者無法確認，因此不能打卡。"
+    );
+  }
+}
+
+async function distanceCalculatorDemo(latlng1, latlng2) {
+  // origins (必要)：計算距離和時間時要做為起點的陣列，在此假設為公司所在經緯度。
+  var origin1 = new google.maps.LatLng(latlng1, latlng2);
+  var origin2 = "Taiwan";
+  var destinationA = "Taiwan";
+  var destinationB = new google.maps.LatLng(latlng1, latlng2);
+
+  var service = new google.maps.DistanceMatrixService();
+  await service.getDistanceMatrix(
+    {
+      origins: [origin1, origin2],
+      destinations: [destinationA, destinationB],
+      travelMode: "DRIVING",
+      unitSystem: google.maps.UnitSystem.METRIC,
+    },
+    callback
+  );
+  function callback(response) {
+    window.distanceNumber = Number(
+      response.rows[0].elements[1].distance.text.split(" ")[0]
+    );
+    window.distanceUnit =
+      response.rows[0].elements[1].distance.text.split(" ")[1];
   }
   if (
     (window.distanceNumber <= 400 && window.distanceUnit === "公尺") ||
