@@ -7,6 +7,12 @@
     <button class="btn btn-primary mb-3 mx-2" @click.prevent="getEmployees">
       查閱員工名單
     </button>
+    <button
+      class="btn btn-primary mb-3 mx-2"
+      @click.prevent="togglePostEmployeeForm"
+    >
+      新增員工帳號
+    </button>
   </div>
   <!-- 出勤記錄表 -->
   <div id="punch-table">
@@ -134,12 +140,65 @@
       ></paginate>
     </div>
   </div>
+  <!-- 新增員工帳號表單 -->
+  <vee-form
+    v-if="this.formStore.isOpenPostEmployeeForm === true"
+    v-bind:validation-schema="schema"
+    v-on:submit="postEmployee"
+  >
+    <!-- 員工編號 -->
+    <h3 class="mt-5 mb-2">新增員工帳號</h3>
+    <div class="mb-3">
+      <label for="employee_code" class="form-label">員工編號</label>
+      <vee-field
+        type="text"
+        name="code"
+        class="form-control"
+        id="code"
+        placeholder="輸入員工編號：TYYYNNNN"
+      />
+      <ErrorMessage class="form-validate-error" name="code" />
+    </div>
+    <!-- 姓名 -->
+    <div class="mb-3">
+      <label for="fullName" class="form-label">員工姓名</label>
+      <vee-field
+        type="text"
+        name="fullName"
+        class="form-control"
+        id="fullName"
+        placeholder="輸入員工姓名"
+      />
+      <ErrorMessage class="form-validate-error" name="fullName" />
+    </div>
+    <!-- 身份 -->
+    <div class="mb-3">
+      <label for="identity" class="form-label">身份</label>
+      <vee-field as="select" name="identity" class="form-select" id="identity">
+        <option value="employee">一般員工</option>
+        <option value="admin">管理者</option>
+      </vee-field>
+      <ErrorMessage class="form-validate-error" name="identity" />
+    </div>
+    <div class="buttons">
+      <button type="submit" class="btn btn-primary mb-3">
+        填妥送出 Submit
+      </button>
+      <button
+        class="btn btn-secondary mx-3 mb-3"
+        @click.prevent="togglePostEmployeeForm"
+      >
+        關閉表單
+      </button>
+    </div>
+  </vee-form>
 </template>
 
 <script>
 import Paginate from "vuejs-paginate-next";
 import { mapStores } from "pinia";
 import useAuthStore from "../stores/auth";
+import useFormStore from "../stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
 
@@ -155,13 +214,14 @@ const toasterInfo = createToaster({
 });
 
 export default {
-  name: "PunchTable",
+  name: "AdminApp",
   components: {
     Paginate,
   },
   computed: {
     // mapStores 需搭配展開運算子，引數代入 store。
     ...mapStores(useAuthStore),
+    ...mapStores(useFormStore),
   },
   props: [],
   data() {
@@ -181,9 +241,42 @@ export default {
         page_current: null,
         page_sum: null,
       },
+      // 資料驗證的 schema
+      schema: {
+        code: {
+          required: true,
+          regex: /^T\d{7}$/,
+        },
+        fullName: {
+          required: true,
+        },
+        identity: {
+          required: true,
+        },
+      },
     };
   },
   methods: {
+    // 管理員可新增員工記錄
+    postEmployee(values) {
+      fetch(`${import.meta.env.VITE_BASE_URL}/api/employees`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.authStore.token}`,
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+        body: `code=${values.code}&fullName=${values.fullName}&identity=${values.identity}`,
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          toasterInfo.show(res.message);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
     // 管理員可檢視員工一覽表
     getEmployees() {
       this.employeeTable.page_current = this.employeeTable.page;
@@ -328,6 +421,10 @@ export default {
     punchesOption() {
       this.punchTable.option = event.target.value;
       this.getPunches(this.punchTable.option);
+    },
+    togglePostEmployeeForm() {
+      this.formStore.isOpenPostEmployeeForm =
+        !this.formStore.isOpenPostEmployeeForm;
     },
   },
 };

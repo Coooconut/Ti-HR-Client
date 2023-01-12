@@ -6,7 +6,7 @@ import {
   Form as VeeForm,
   Field as VeeField,
 } from "vee-validate";
-import { max, min, required } from "@vee-validate/rules";
+import { max, min, regex, required } from "@vee-validate/rules";
 
 export default {
   // 引數 app 表示將插件安在指定的 .vue 檔案
@@ -17,6 +17,7 @@ export default {
 
     // 引數一表示驗證規則的名稱，可自訂別名。引數二表示使用 @vee-validate/rules 套件中的那個驗證規則。
     // 規則一覽：https://vee-validate.logaretm.com/v4/guide/global-validators#vee-validaterules
+    defineRule("regex", regex);
     defineRule("required", required);
     defineRule("max", max);
     defineRule("min", min);
@@ -24,6 +25,7 @@ export default {
     configure({
       generateMessage: (ctx) => {
         const messages = {
+          regex: `這個欄位必須是T開頭，外加七個數字。`,
           required: `這個欄位是必填`,
           max: `這個欄位頂多只有八個字元`,
           min: `這個欄位至少要有四個字元`,
