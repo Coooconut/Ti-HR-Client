@@ -7,7 +7,7 @@
       確認公司位置
     </button>
   </div>
-  <div class="spinner mb-3" v-if="this.process.loadingUserPosition === true">
+  <div class="spinner mb-3" v-if="process.loadingUserPosition === true">
     <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
     <span
       >正在定位，請暫時停止任何操作。如果等候時間過久，可能是你未授權本網站定位，
@@ -28,73 +28,58 @@
   </GMapMap>
 </template>
 
-<script>
+<script setup>
+import { reactive } from "vue";
 import useProcessStore from "../stores/process";
-import { createToaster } from "@meforma/vue-toaster";
 
-const toasterInfo = createToaster({
-  type: "info",
-  position: "top",
-  duration: 5000,
+const process = useProcessStore();
+
+const center = reactive({
+  lat: 25.05756263191021,
+  lng: 121.61238726873873,
 });
-
-export default {
-  name: "GoogleMap",
-  data() {
-    return {
-      center: {
-        lat: 25.05756263191021,
-        lng: 121.61238726873873,
-      },
-      markers: [
-        {
-          id: "TitanSoft",
-          position: {
-            lat: 25.05756263191021,
-            lng: 121.61238726873873,
-          },
-        },
-        {
-          id: "User",
-          position: {
-            lat: null,
-            lng: null,
-          },
-        },
-      ],
-      process: useProcessStore(),
-    };
-  },
-  methods: {
-    // 將地圖中心點重置為公司所在地
-    findCompany() {
-      this.center = {
-        lat: 25.05756263191021,
-        lng: 121.61238726873873,
-      };
-    },
-    // 將地圖中心點設置為使用者所在地
-    findUser() {
-      this.process.loadingUserPosition = true;
-      const promise = new Promise(function (resolve) {
-        // 使用瀏覽器的定位功能
-        navigator.geolocation.getCurrentPosition(function (position) {
-          const latlng1 = position.coords.latitude;
-          const latlng2 = position.coords.longitude;
-          resolve({ lat: latlng1, lng: latlng2 });
-        });
-      });
-      promise
-        .then((res) => {
-          this.center = res;
-          this.markers[1].position = res;
-          this.process.loadingUserPosition = false;
-        })
-        .catch((err) => {
-          this.process.loadingUserPosition = false;
-          console.error(err);
-        });
+const markers = reactive([
+  {
+    id: "TitanSoft",
+    position: {
+      lat: 25.05756263191021,
+      lng: 121.61238726873873,
     },
   },
-};
+  {
+    id: "User",
+    position: {
+      lat: null,
+      lng: null,
+    },
+  },
+]);
+// 將地圖中心點重置為公司所在地
+function findCompany() {
+  center.lat = 25.05756263191021;
+  center.lng = 121.61238726873873;
+}
+// 將地圖中心點設置為使用者所在地
+function findUser() {
+  process.loadingUserPosition = true;
+  const promise = new Promise(function (resolve) {
+    // 使用瀏覽器的定位功能
+    navigator.geolocation.getCurrentPosition(function (position) {
+      const latlng1 = position.coords.latitude;
+      const latlng2 = position.coords.longitude;
+      resolve({ lat: latlng1, lng: latlng2 });
+    });
+  });
+  promise
+    .then((res) => {
+      center.lat = res.lat;
+      center.lng = res.lng;
+      markers[1].position = res;
+      process.loadingUserPosition = false;
+    })
+    .catch((err) => {
+      process.loadingUserPosition = false;
+      console.error(err);
+    });
+}
 </script>

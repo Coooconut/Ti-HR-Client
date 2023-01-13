@@ -28,47 +28,39 @@
   </vee-form>
 </template>
 
-<script>
+<script setup>
+import useAuthStore from "@/stores/auth";
 import { createToaster } from "@meforma/vue-toaster";
 
+const auth = useAuthStore();
 const toasterInfo = createToaster({
   type: "info",
   position: "top",
   duration: 8000,
 });
-
-export default {
-  name: "SignInForm",
-  data() {
-    return {
-      // 資料驗證的 schema
-      schema: {
-        employee_code: "required|max:8|min:4",
-        password: "required",
-      },
-    };
-  },
-  emits: ["emit-sign-in"],
-  methods: {
-    signIn(values) {
-      fetch(`${import.meta.env.VITE_BASE_URL}/api/signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
-        body: `employeeCode=${values.employee_code}&password=${values.password}`,
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          toasterInfo.show(res.message);
-          this.$emit("emit-sign-in", res);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-  },
+// 資料驗證的 schema
+const schema = {
+  employee_code: "required|max:8|min:4",
+  password: "required",
 };
+function signIn(values) {
+  fetch(`${import.meta.env.VITE_BASE_URL}/api/signIn`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+    },
+    body: `employeeCode=${values.employee_code}&password=${values.password}`,
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      toasterInfo.show(res.message);
+      auth.token = res.data.token;
+      auth.user = res.data.employee;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
 </script>

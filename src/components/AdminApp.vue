@@ -16,7 +16,7 @@
   </div>
   <!-- 出勤記錄表 -->
   <div id="punch-table">
-    <div class="punch-table" v-if="this.punchTable.data !== null">
+    <div class="punch-table" v-if="punchTable.data !== null">
       <button
         class="mx-5 btn btn-secondary position-absolute end-0"
         @click.prevent="closePunchTable"
@@ -68,7 +68,7 @@
       </table>
     </div>
     <!-- Pagination -->
-    <div class="container" v-if="this.punchTable.data !== null">
+    <div class="container" v-if="punchTable.data !== null">
       <paginate
         v-model="punchTable.page"
         :page-count="punchTable.page_sum"
@@ -82,7 +82,7 @@
   </div>
   <!-- 員工一覽表 -->
   <div id="employee-table">
-    <div class="employee-table" v-if="this.employeeTable.data !== null">
+    <div class="employee-table" v-if="employeeTable.data !== null">
       <button
         class="mx-5 btn btn-secondary position-absolute end-0"
         @click.prevent="closeEmployeeTable"
@@ -128,7 +128,7 @@
       </table>
     </div>
     <!-- Pagination -->
-    <div class="container" v-if="this.employeeTable.data !== null">
+    <div class="container" v-if="employeeTable.data !== null">
       <paginate
         v-model="employeeTable.page"
         :page-count="employeeTable.page_sum"
@@ -142,7 +142,7 @@
   </div>
   <!-- 新增員工帳號表單 -->
   <vee-form
-    v-if="this.formStore.isOpenPostEmployeeForm === true"
+    v-if="form.isOpenPostEmployeeForm === true"
     v-bind:validation-schema="schema"
     v-on:submit="postEmployee"
   >
@@ -194,14 +194,16 @@
   </vee-form>
 </template>
 
-<script>
+<script setup>
+import { reactive } from "vue";
 import Paginate from "vuejs-paginate-next";
-import { mapStores } from "pinia";
 import useAuthStore from "../stores/auth";
 import useFormStore from "../stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
 
+const auth = useAuthStore();
+const form = useFormStore();
 const toasterError = createToaster({
   type: "error",
   position: "top",
@@ -212,222 +214,200 @@ const toasterInfo = createToaster({
   position: "top",
   duration: 6000,
 });
-
-export default {
-  name: "AdminApp",
-  components: {
-    Paginate,
+const punchTable = reactive({
+  count: null,
+  data: null,
+  page: null,
+  page_current: null,
+  page_sum: null,
+  option: "all",
+});
+const employeeTable = reactive({
+  count: null,
+  data: null,
+  page: 1,
+  page_current: null,
+  page_sum: null,
+});
+// 資料驗證的 schema
+const schema = reactive({
+  code: {
+    required: true,
+    regex: /^T\d{7}$/,
   },
-  computed: {
-    // mapStores 需搭配展開運算子，引數代入 store。
-    ...mapStores(useAuthStore),
-    ...mapStores(useFormStore),
+  fullName: {
+    required: true,
   },
-  props: [],
-  data() {
-    return {
-      punchTable: {
-        count: null,
-        data: null,
-        page: null,
-        page_current: null,
-        page_sum: null,
-        option: "all",
+  identity: {
+    required: true,
+  },
+});
+// 管理員可新增員工記錄
+function postEmployee(values) {
+  fetch(`${import.meta.env.VITE_BASE_URL}/api/employees`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+    },
+    body: `code=${values.code}&fullName=${values.fullName}&identity=${values.identity}`,
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      toasterInfo.show(res.message);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+// 管理員可檢視員工一覽表
+function getEmployees() {
+  employeeTable.page_current = employeeTable.page;
+  fetch(
+    `${import.meta.env.VITE_BASE_URL}/api/employees?` +
+      new URLSearchParams({
+        page: employeeTable.page_current,
+      }),
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        "Content-Type": "application/json",
       },
-      employeeTable: {
-        count: null,
-        data: null,
-        page: 1,
-        page_current: null,
-        page_sum: null,
+    }
+  )
+    .then((res) => res.json())
+    .then((res) => {
+      toasterInfo.show(res.message);
+      employeeTable.count = res.count;
+      employeeTable.data = res.data;
+      employeeTable.page = employeeTable.page_current;
+      employeeTable.page_sum = Math.ceil(employeeTable.count / 10);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+// 管理員可檢視打卡記錄。option 由函式 punchesOption() 傳遞
+function getPunches(option) {
+  punchTable.page_current = punchTable.page;
+  fetch(
+    `${import.meta.env.VITE_BASE_URL}/api/punches?` +
+      new URLSearchParams({
+        page: punchTable.page_current,
+        option: punchTable.option,
+      }),
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        "Content-Type": "application/json",
       },
-      // 資料驗證的 schema
-      schema: {
-        code: {
-          required: true,
-          regex: /^T\d{7}$/,
-        },
-        fullName: {
-          required: true,
-        },
-        identity: {
-          required: true,
-        },
+    }
+  )
+    .then((res) => res.json())
+    .then((res) => {
+      // 將資料庫儲存的時間轉換為易讀格式
+      res.data.forEach((element) => {
+        element.createdAt = dayjs(element.createdAt).format("HH:mm:ss");
+        element.updatedAt = dayjs(element.updatedAt).format("HH:mm:ss");
+      });
+      toasterInfo.show(res.message);
+      punchTable.count = res.count;
+      punchTable.data = res.data;
+      punchTable.page = punchTable.page_current;
+      punchTable.page_sum = Math.ceil(punchTable.count / 10);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+// 管理員可將員工的缺勤狀態改為到勤
+function changeState(punchId, punchState) {
+  if (
+    !window.confirm(
+      `確定要將打卡編號 ${punchId} 的狀態改為到勤嗎？變更後將無法在此平台恢復原狀！`
+    )
+  ) {
+    return null;
+  }
+  if (punchState === "出勤時數已達標準") {
+    toasterError.show("變更狀態失敗。該筆記錄本來就是到勤。");
+    return null;
+  }
+  fetch(`${import.meta.env.VITE_BASE_URL}/api/punches/${punchId}/state`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+    },
+    body: `punch_id=${punchId}`,
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      toasterInfo.show(res.message);
+      getPunches();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+// 管理員可將員工的密碼錯誤次數歸零
+function resetCount(code, fullName, count) {
+  if (
+    !window.confirm(
+      `確定要將員工編號 ${code} ${fullName}的密碼錯誤次數歸零嗎？送出請求後將無法在此平台恢復原狀！`
+    )
+  ) {
+    return null;
+  }
+  if (count <= 4) {
+    toasterError.show("請求失敗。當密碼錯誤次數超過四次才可發出請求。");
+    return null;
+  }
+  fetch(
+    `${import.meta.env.VITE_BASE_URL}/api/employees/typo_count?` +
+      new URLSearchParams({
+        code,
+      }),
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        "Content-Type": "application/json",
       },
-    };
-  },
-  methods: {
-    // 管理員可新增員工記錄
-    postEmployee(values) {
-      fetch(`${import.meta.env.VITE_BASE_URL}/api/employees`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${this.authStore.token}`,
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
-        body: `code=${values.code}&fullName=${values.fullName}&identity=${values.identity}`,
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          toasterInfo.show(res.message);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    // 管理員可檢視員工一覽表
-    getEmployees() {
-      this.employeeTable.page_current = this.employeeTable.page;
-      fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/employees?` +
-          new URLSearchParams({
-            page: this.employeeTable.page_current,
-          }),
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${this.authStore.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          toasterInfo.show(res.message);
-          this.employeeTable.count = res.count;
-          this.employeeTable.data = res.data;
-          this.employeeTable.page = this.employeeTable.page_current;
-          this.employeeTable.page_sum = Math.ceil(
-            this.employeeTable.count / 10
-          );
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    // 管理員可檢視打卡記錄。option 由函式 punchesOption() 傳遞
-    getPunches(option) {
-      this.punchTable.page_current = this.punchTable.page;
-      fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/punches?` +
-          new URLSearchParams({
-            page: this.punchTable.page_current,
-            option: this.punchTable.option,
-          }),
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${this.authStore.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          // 將資料庫儲存的時間轉換為易讀格式
-          res.data.forEach((element) => {
-            element.createdAt = dayjs(element.createdAt).format("HH:mm:ss");
-            element.updatedAt = dayjs(element.updatedAt).format("HH:mm:ss");
-          });
-          toasterInfo.show(res.message);
-          this.punchTable.count = res.count;
-          this.punchTable.data = res.data;
-          this.punchTable.page = this.punchTable.page_current;
-          this.punchTable.page_sum = Math.ceil(this.punchTable.count / 10);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    // 管理員可將員工的缺勤狀態改為到勤
-    changeState(punchId, punchState) {
-      if (
-        !window.confirm(
-          `確定要將打卡編號 ${punchId} 的狀態改為到勤嗎？變更後將無法在此平台恢復原狀！`
-        )
-      ) {
-        return null;
-      }
-      if (punchState === "出勤時數已達標準") {
-        toasterError.show("變更狀態失敗。該筆記錄本來就是到勤。");
-        return null;
-      }
-      fetch(`${import.meta.env.VITE_BASE_URL}/api/punches/${punchId}/state`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${this.authStore.token}`,
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
-        body: `punch_id=${punchId}`,
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          toasterInfo.show(res.message);
-          this.getPunches();
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    // 管理員可將員工的密碼錯誤次數歸零
-    resetCount(code, fullName, count) {
-      if (
-        !window.confirm(
-          `確定要將員工編號 ${code} ${fullName}的密碼錯誤次數歸零嗎？送出請求後將無法在此平台恢復原狀！`
-        )
-      ) {
-        return null;
-      }
-      if (count <= 4) {
-        toasterError.show("請求失敗。當密碼錯誤次數超過四次才可發出請求。");
-        return null;
-      }
-      fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/employees/typo_count?` +
-          new URLSearchParams({
-            code,
-          }),
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${this.authStore.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          toasterInfo.show(res.message);
-          this.getEmployees();
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    closeEmployeeTable() {
-      this.employeeTable.data = null;
-    },
-    closePunchTable() {
-      this.punchTable.data = null;
-      this.punchTable.option = "all";
-    },
-    // 傳遞查閱打卡記錄的條件
-    punchesOption() {
-      this.punchTable.option = event.target.value;
-      this.getPunches(this.punchTable.option);
-    },
-    togglePostEmployeeForm() {
-      this.formStore.isOpenPostEmployeeForm =
-        !this.formStore.isOpenPostEmployeeForm;
-    },
-  },
-};
+    }
+  )
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      toasterInfo.show(res.message);
+      getEmployees();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+function closeEmployeeTable() {
+  employeeTable.data = null;
+}
+function closePunchTable() {
+  punchTable.data = null;
+  punchTable.option = "all";
+}
+// 傳遞查閱打卡記錄的條件
+function punchesOption() {
+  punchTable.option = event.target.value;
+  getPunches(punchTable.option);
+}
+function togglePostEmployeeForm() {
+  form.isOpenPostEmployeeForm = !form.isOpenPostEmployeeForm;
+}
 </script>
 
 <style>

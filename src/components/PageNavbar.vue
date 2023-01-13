@@ -60,34 +60,35 @@
   </nav>
 </template>
 
-<script>
+<script setup>
 import useAuthStore from "@/stores/auth";
 import useProcessStore from "@/stores/process";
 import { RouterLink } from "vue-router";
+import { createToaster } from "@meforma/vue-toaster";
 
-export default {
-  name: "PageNavbar",
-  data() {
-    return {
-      auth: useAuthStore(),
-      process: useProcessStore(),
-    };
-  },
-  emits: ["emit-get-user-ip", "emit-sign-out"],
-  methods: {
-    toggle2dCode() {
-      if (this.auth.twoDCode === null) {
-        this.process.loading2DCode = true;
-        this.$emit("emit-get-user-ip");
-      }
-    },
-    signOut() {
-      if (this.auth.token) {
-        this.auth.token = null;
-        this.$emit("emit-sign-out");
-      }
-    },
-  },
-  components: { RouterLink },
-};
+const auth = useAuthStore();
+const process = useProcessStore();
+const emit = defineEmits(["emit-get-user-ip", "emit-sign-out"]);
+const toasterInfo = createToaster({
+  type: "info",
+  position: "top",
+  duration: 5000,
+});
+
+function toggle2dCode() {
+  if (auth.twoDCode === null) {
+    process.loading2DCode = true;
+    emit("emit-get-user-ip");
+  }
+}
+function signOut() {
+  if (auth.token) {
+    auth.token = null;
+    auth.twoDCode = null;
+    auth.twoDCodeDemo = null;
+    auth.user = null;
+    auth.token = null;
+    toasterInfo.show("你已登出系統");
+  }
+}
 </script>

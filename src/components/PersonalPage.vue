@@ -5,14 +5,14 @@
     </button>
     <button
       class="btn btn-primary mb-3 mx-2"
-      @click.prevent="openChangePasswordForm"
+      @click.prevent="toggleChangePasswordForm"
     >
       更改密碼
     </button>
   </div>
   <!-- 個人打卡記錄表單 -->
   <div id="punch-table">
-    <div class="punch-table" v-if="this.punchTable.data !== null">
+    <div class="punch-table" v-if="punchTable.data !== null">
       <button
         class="mx-5 btn btn-secondary position-absolute end-0"
         @click.prevent="closePunchTable"
@@ -55,7 +55,7 @@
       </table>
     </div>
     <!-- Pagination -->
-    <div class="container" v-if="this.punchTable.data !== null">
+    <div class="container" v-if="punchTable.data !== null">
       <paginate
         v-model="punchTable.page"
         :page-count="punchTable.page_sum"
@@ -71,7 +71,7 @@
   <vee-form
     v-bind:validation-schema="schema"
     v-on:submit="changPassword"
-    v-if="passwordForm === 'open'"
+    v-if="passwordForm === true"
   >
     <h3 class="mt-3 mb-3">更改密碼申請表</h3>
     <!-- 舊密碼 -->
@@ -113,125 +113,110 @@
     <button type="submit" class="btn btn-primary">更改密碼 Submit</button>
     <button
       class="mx-5 btn btn-secondary"
-      v-if="passwordForm === 'open'"
-      @click.prevent="closeChangePasswordForm"
+      v-if="passwordForm === true"
+      @click.prevent="toggleChangePasswordForm"
     >
       關閉表單
     </button>
   </vee-form>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive } from "vue";
 import Paginate from "vuejs-paginate-next";
 import useAuthStore from "@/stores/auth";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
 
+const auth = useAuthStore();
 const toasterInfo = createToaster({
   type: "info",
   position: "top",
   duration: 5000,
 });
-
-export default {
-  name: "PersonalPage",
-  components: {
-    Paginate,
-  },
-  data() {
-    return {
-      // 資料驗證的 schema
-      schema: {
-        password: "required",
-        new_password: "required",
-        new_password_confirm: "required",
+// 資料驗證的 schema
+const schema = reactive({
+  password: "required",
+  new_password: "required",
+  new_password_confirm: "required",
+});
+let passwordForm = ref(false);
+const punchTable = reactive({
+  count: null,
+  data: null,
+  page: null,
+  page_current: null,
+  page_sum: null,
+  option: "all",
+});
+// 使用者可以查閱自己的打卡記錄。option 透過 punchesOption() 傳遞
+function getMyPunches(option) {
+  punchTable.page_current = punchTable.page;
+  fetch(
+    `${import.meta.env.VITE_BASE_URL}/api/punches/${
+      auth.user.code
+    }/my_punches?` +
+      new URLSearchParams({
+        page: punchTable.page_current,
+        option: punchTable.option,
+      }),
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+        "Content-Type": "application/json",
       },
-      auth: useAuthStore(),
-      passwordForm: "close",
-      punchTable: {
-        count: null,
-        data: null,
-        page: null,
-        page_current: null,
-        page_sum: null,
-        option: "all",
-      },
-    };
-  },
-  methods: {
-    // 使用者可以更改登入密碼
-    changPassword(values) {
-      fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/password`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-          Authorization: `Bearer ${this.auth.token}`,
-        },
-        body: `password=${values.password}&newPassword=${values.new_password}&newPasswordConfirm=${values.new_password_confirm}`,
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((res) => {
-          toasterInfo.show(res.message);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    }
+  )
+    .then((res) => res.json())
+    .then((res) => {
+      // 將資料庫儲存的時間轉換為易讀格式
+      res.data.forEach((element) => {
+        element.createdAt = dayjs(element.createdAt).format("HH:mm:ss");
+        element.updatedAt = dayjs(element.updatedAt).format("HH:mm:ss");
+      });
+      toasterInfo.show(res.message);
+      punchTable.count = res.count;
+      punchTable.data = res.data;
+      punchTable.page = punchTable.page_current;
+      punchTable.page_sum = Math.ceil(punchTable.count / 10);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+function closePunchTable() {
+  punchTable.data = null;
+  punchTable.option = "all";
+}
+// 使用者可以更改登入密碼
+function changPassword(values) {
+  fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      Authorization: `Bearer ${auth.token}`,
     },
-    // 使用者可以查閱自己的打卡記錄。option 透過 punchesOption() 傳遞
-    getMyPunches(option) {
-      this.punchTable.page_current = this.punchTable.page;
-      fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/punches/${
-          this.auth.user.code
-        }/my_punches?` +
-          new URLSearchParams({
-            page: this.punchTable.page_current,
-            option: this.punchTable.option,
-          }),
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${this.auth.token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          // 將資料庫儲存的時間轉換為易讀格式
-          res.data.forEach((element) => {
-            element.createdAt = dayjs(element.createdAt).format("HH:mm:ss");
-            element.updatedAt = dayjs(element.updatedAt).format("HH:mm:ss");
-          });
-          toasterInfo.show(res.message);
-          this.punchTable.count = res.count;
-          this.punchTable.data = res.data;
-          this.punchTable.page = this.punchTable.page_current;
-          this.punchTable.page_sum = Math.ceil(this.punchTable.count / 10);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    closePunchTable() {
-      this.punchTable.data = null;
-      this.punchTable.option = "all";
-    },
-    closeChangePasswordForm() {
-      this.passwordForm = "close";
-    },
-    openChangePasswordForm() {
-      this.passwordForm = "open";
-    },
-    // 傳遞查閱打卡記錄的條件
-    punchesOption() {
-      this.punchTable.option = event.target.value;
-      this.getMyPunches(this.punchTable.option);
-    },
-  },
-};
+    body: `password=${values.password}&newPassword=${values.new_password}&newPasswordConfirm=${values.new_password_confirm}`,
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      toasterInfo.show(res.message);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+function toggleChangePasswordForm() {
+  passwordForm.value = !passwordForm.value;
+}
+// 傳遞查閱打卡記錄的條件
+function punchesOption() {
+  punchTable.option = event.target.value;
+  getMyPunches(punchTable.option);
+}
 </script>
 
 <style>
