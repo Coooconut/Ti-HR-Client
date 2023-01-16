@@ -1,9 +1,5 @@
-<script setup>
-import App from "../App.vue";
-</script>
+<script setup></script>
 
 <template>
-  <main>
-    <App />
-  </main>
+  <div id="home"></div>
 </template>

@@ -9,6 +9,8 @@
     </header>
     <!-- 登入表單 -->
     <sign-in-form v-if="auth.user === null"></sign-in-form>
+    <!-- WebSocket -->
+    <web-socket />
   </main>
   <router-view />
 </template>
@@ -17,6 +19,7 @@
 import { ref } from "vue";
 import useAuthStore from "./stores/auth";
 import useProcessStore from "./stores/process";
+import WebSocket from "./components/WebSocket.vue";
 import PageNavbar from "./components/PageNavbar.vue";
 import SignInForm from "./components/SignInForm.vue";
 

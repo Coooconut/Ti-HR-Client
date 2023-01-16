@@ -21,6 +21,7 @@
         class="form-control"
         id="password"
         placeholder="Enter your password."
+        autocomplete="off"
       />
       <ErrorMessage class="form-validate-error" name="password" />
     </div>

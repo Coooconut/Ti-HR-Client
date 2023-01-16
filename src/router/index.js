@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import AdminView from "../views/AdminView.vue";
 import GpsView from "../views/GpsView.vue";
+import HomeView from "../views/HomeView.vue";
 import PersonalPage from "../views/PersonalPage.vue";
 import CodeReader from "../views/CodeReader.vue";
 import TwoDCode from "../views/TwoDCode.vue";
@@ -14,7 +15,8 @@ const router = createRouter({
     },
     {
       path: "/",
-      name: "home",
+      component: HomeView,
+      name: "HomeView",
     },
     {
       path: "/admin",
