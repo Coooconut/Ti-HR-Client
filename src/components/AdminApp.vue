@@ -40,6 +40,7 @@
             <th scope="col">日期</th>
             <th scope="col">員工編號</th>
             <th scope="col">姓名</th>
+            <th scope="col">出勤時數</th>
             <th scope="col">狀態</th>
             <th scope="col">變更狀態</th>
             <th scope="col">上班打卡時間</th>
@@ -52,10 +53,12 @@
             <td>{{ punch.workingDay }}</td>
             <td>{{ punch.Employee.code }}</td>
             <td>{{ punch.Employee.full_name }}</td>
+            <td>{{ punch.workingHours }}</td>
             <td>{{ punch.state }}</td>
             <td>
               <button
                 class="btn btn-success"
+                v-if="punch.state !== '出勤時數已達標準'"
                 @click.prevent="changeState(punch.id, punch.state)"
               >
                 改為到勤
