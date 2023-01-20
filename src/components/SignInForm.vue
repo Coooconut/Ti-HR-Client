@@ -31,14 +31,9 @@
 
 <script setup>
 import useAuthStore from "@/stores/auth";
-import { createToaster } from "@meforma/vue-toaster";
 
 const auth = useAuthStore();
-const toasterInfo = createToaster({
-  type: "info",
-  position: "top",
-  duration: 8000,
-});
+
 // 資料驗證的 schema
 const schema = {
   employee_code: "required|max:8|min:4",
@@ -56,9 +51,7 @@ function signIn(values) {
       return res.json();
     })
     .then((res) => {
-      toasterInfo.show(res.message);
-      auth.token = res.data.token;
-      auth.user = res.data.employee;
+      auth.signIn(res);
     })
     .catch((err) => {
       console.error(err);

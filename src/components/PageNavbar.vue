@@ -23,10 +23,6 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="gps">GPS 打卡</RouterLink>
           </li>
-          <!-- /admin 人資專區 -->
-          <li class="nav-item">
-            <RouterLink class="nav-link" to="admin">人資專區</RouterLink>
-          </li>
           <!-- 生成二維碼 -->
           <li class="nav-item">
             <RouterLink
@@ -46,12 +42,16 @@
               >個人頁面</RouterLink
             >
           </li>
+          <!-- /admin 人資專區 -->
+          <li class="nav-item" v-if="auth.user.identity === 'admin'">
+            <RouterLink class="nav-link" to="admin">人資專區</RouterLink>
+          </li>
         </ul>
         <form class="d-flex" role="search">
           <RouterLink
             class="btn btn-outline-secondary"
             to="/sign-out"
-            @click.prevent="signOut"
+            @click.prevent="auth.signOut('你已登出系統')"
             >登出系統</RouterLink
           >
         </form>
@@ -64,31 +64,15 @@
 import useAuthStore from "@/stores/auth";
 import useProcessStore from "@/stores/process";
 import { RouterLink } from "vue-router";
-import { createToaster } from "@meforma/vue-toaster";
 
 const auth = useAuthStore();
 const process = useProcessStore();
 const emit = defineEmits(["emit-get-user-ip", "emit-sign-out"]);
-const toasterInfo = createToaster({
-  type: "info",
-  position: "top",
-  duration: 5000,
-});
 
 function toggle2dCode() {
   if (auth.twoDCode === null) {
     process.loading2DCode = true;
     emit("emit-get-user-ip");
-  }
-}
-function signOut() {
-  if (auth.token) {
-    auth.token = null;
-    auth.twoDCode = null;
-    auth.twoDCodeDemo = null;
-    auth.user = null;
-    auth.token = null;
-    toasterInfo.show("你已登出系統");
   }
 }
 </script>
