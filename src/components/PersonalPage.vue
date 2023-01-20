@@ -125,12 +125,14 @@
 
 <script setup>
 import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
 import Paginate from "vuejs-paginate-next";
 import useAuthStore from "@/stores/auth";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
 
 const auth = useAuthStore();
+const router = useRouter();
 const toasterInfo = createToaster({
   type: "info",
   position: "top",
@@ -142,7 +144,12 @@ const schema = reactive({
   new_password: "required",
   new_password_confirm: "required",
 });
+// 利用 passwordForm 的值搭配 v-if 顯示或隱藏變更密碼表單
 let passwordForm = ref(false);
+/*
+宣告出勤記錄表的各項屬性。
+count 記錄總筆數、data 後端傳來的記錄、page 欲檢視的頁碼、page_current 當前頁碼、page_sum 頁面總數、option 檢索條件。
+*/
 const punchTable = reactive({
   count: null,
   data: null,
@@ -151,7 +158,7 @@ const punchTable = reactive({
   page_sum: null,
   option: "all",
 });
-// 使用者可以查閱自己的打卡記錄。option 透過 punchesOption() 傳遞
+// 使用者可以查閱自己的打卡記錄。option 透過 punchesOption() 傳遞。
 function getMyPunches(option) {
   punchTable.page_current = punchTable.page;
   fetch(
@@ -205,12 +212,19 @@ function changPassword(values) {
       return res.json();
     })
     .then((res) => {
-      toasterInfo.show(res.message);
+      // 若更改密碼成功，就將使用者登出系統。否則提示錯誤訊息。
+      if (res.message === "更改密碼成功") {
+        auth.signOut("更改密碼成功。請用新密碼登入系統。");
+        router.push("/");
+      } else {
+        toasterInfo.show(res.message);
+      }
     })
     .catch((err) => {
       console.error(err);
     });
 }
+// 顯示或關閉更改密碼表單
 function toggleChangePasswordForm() {
   passwordForm.value = !passwordForm.value;
 }

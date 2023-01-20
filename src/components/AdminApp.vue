@@ -59,7 +59,7 @@
               <button
                 class="btn btn-success"
                 v-if="punch.state !== '出勤時數已達標準'"
-                @click.prevent="changeState(punch.id, punch.state)"
+                @click.prevent="changeState(punch.id)"
               >
                 改為到勤
               </button>
@@ -100,7 +100,9 @@
             <th scope="col">身份</th>
             <th scope="col">姓名</th>
             <th scope="col">密碼錯誤次數</th>
-            <th scope="col">密碼錯誤次數歸零</th>
+            <th scope="col">
+              密碼錯誤次數歸零（僅可將錯誤次數五次以上者歸零）
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -115,13 +117,8 @@
             <td>
               <button
                 class="btn btn-success"
-                @click.prevent="
-                  resetCount(
-                    employee.code,
-                    employee.fullName,
-                    employee.typoCount
-                  )
-                "
+                v-if="employee.typoCount > 4"
+                @click.prevent="resetCount(employee.code, employee.fullName)"
               >
                 歸零
               </button>
@@ -207,16 +204,15 @@ import dayjs from "dayjs";
 
 const auth = useAuthStore();
 const form = useFormStore();
-const toasterError = createToaster({
-  type: "error",
-  position: "top",
-  duration: 2000,
-});
 const toasterInfo = createToaster({
   type: "info",
   position: "top",
   duration: 6000,
 });
+/*
+宣告出勤記錄表的各項屬性。
+count 記錄總筆數、data 後端傳來的記錄、page 欲檢視的頁碼、page_current 當前頁碼、page_sum 頁面總數、option 檢索條件。
+*/
 const punchTable = reactive({
   count: null,
   data: null,
@@ -225,6 +221,7 @@ const punchTable = reactive({
   page_sum: null,
   option: "all",
 });
+// 宣告員工名單的各項屬性。屬性定義參見 punchTable。
 const employeeTable = reactive({
   count: null,
   data: null,
@@ -236,6 +233,7 @@ const employeeTable = reactive({
 const schema = reactive({
   code: {
     required: true,
+    // 員工編號必須符合 T1234567（T 加七個數字）的格式。
     regex: /^T\d{7}$/,
   },
   fullName: {
@@ -245,8 +243,8 @@ const schema = reactive({
     required: true,
   },
 });
-// 管理員可新增員工記錄
-function postEmployee(values) {
+// 管理員可新增員工記錄。第二個引數是套件 vee-validate 的功能，可以在表單送出資料後清除欄位內的資料，且不觸發資料驗證，因此不會出現必填欄位未填的警告。
+function postEmployee(values, { resetForm }) {
   fetch(`${import.meta.env.VITE_BASE_URL}/api/employees`, {
     method: "POST",
     headers: {
@@ -260,6 +258,8 @@ function postEmployee(values) {
     })
     .then((res) => {
       toasterInfo.show(res.message);
+      // 套件 vee-validate 的功能，清除表單中的資料。
+      resetForm();
     })
     .catch((err) => {
       console.error(err);
@@ -328,16 +328,12 @@ function getPunches(option) {
     });
 }
 // 管理員可將員工的缺勤狀態改為到勤
-function changeState(punchId, punchState) {
+function changeState(punchId) {
   if (
     !window.confirm(
       `確定要將打卡編號 ${punchId} 的狀態改為到勤嗎？變更後將無法在此平台恢復原狀！`
     )
   ) {
-    return null;
-  }
-  if (punchState === "出勤時數已達標準") {
-    toasterError.show("變更狀態失敗。該筆記錄本來就是到勤。");
     return null;
   }
   fetch(`${import.meta.env.VITE_BASE_URL}/api/punches/${punchId}/state`, {
@@ -353,6 +349,7 @@ function changeState(punchId, punchState) {
     })
     .then((res) => {
       toasterInfo.show(res.message);
+      // 變更狀態後，刷新頁面。
       getPunches();
     })
     .catch((err) => {
@@ -360,16 +357,12 @@ function changeState(punchId, punchState) {
     });
 }
 // 管理員可將員工的密碼錯誤次數歸零
-function resetCount(code, fullName, count) {
+function resetCount(code, fullName) {
   if (
     !window.confirm(
       `確定要將員工編號 ${code} ${fullName}的密碼錯誤次數歸零嗎？送出請求後將無法在此平台恢復原狀！`
     )
   ) {
-    return null;
-  }
-  if (count <= 4) {
-    toasterError.show("請求失敗。當密碼錯誤次數超過四次才可發出請求。");
     return null;
   }
   fetch(
@@ -390,15 +383,18 @@ function resetCount(code, fullName, count) {
     })
     .then((res) => {
       toasterInfo.show(res.message);
+      // 密碼錯誤次數歸零後，刷新頁面。
       getEmployees();
     })
     .catch((err) => {
       console.error(err);
     });
 }
+// 關閉員工名單
 function closeEmployeeTable() {
   employeeTable.data = null;
 }
+// 關閉出勤表單
 function closePunchTable() {
   punchTable.data = null;
   punchTable.option = "all";
@@ -408,6 +404,7 @@ function punchesOption() {
   punchTable.option = event.target.value;
   getPunches(punchTable.option);
 }
+// 開關新增員工帳號的表單
 function togglePostEmployeeForm() {
   form.isOpenPostEmployeeForm = !form.isOpenPostEmployeeForm;
 }

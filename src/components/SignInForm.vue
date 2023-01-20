@@ -39,6 +39,7 @@ const schema = {
   employee_code: "required|max:8|min:4",
   password: "required",
 };
+// 使用者可以登入系統
 function signIn(values) {
   fetch(`${import.meta.env.VITE_BASE_URL}/api/signIn`, {
     method: "POST",

@@ -2,7 +2,7 @@
   <div>
     <p class="error">{{ error }}</p>
     <div class="result-container">
-      <p class="decode-result">最近的掃碼結果：{{ result }}</p>
+      <h3 class="decode-result">{{ userHint }}</h3>
       <div class="spinner mt-2" v-if="process.loading2DCodePunch === true">
         <div class="spinner-border text-success mt-2 mx-2" role="status"></div>
         <span>打卡程序處理中，請暫時停止任何操作。</span>
@@ -28,12 +28,16 @@ const toasterInfo = createToaster({
   duration: 8000,
 });
 let result = ref(null);
+let userHint = ref(null);
 let error = ref(null);
 
 // 掃碼儀解碼
 function onDecode(scanResult) {
   process.loading2DCodePunch = true;
+  userHint.value = "掃碼成功";
+  // 將 result.value 賦值為 scanResult，之後調用 twoDCodePunch() 時會用此值當作 fetch 的網址。
   result.value = scanResult;
+  // 掃碼成功就調用打卡函式
   twoDCodePunch();
 }
 // 啟用掃碼儀

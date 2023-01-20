@@ -1,7 +1,9 @@
 <template>
   <main>
     <div class="container">
+      <!-- GPS 打卡頁面中的 Google 地圖 -->
       <GoogleMap />
+      <!-- GPS 打卡按鈕及打卡邏輯 -->
       <GpsApp />
     </div>
   </main>

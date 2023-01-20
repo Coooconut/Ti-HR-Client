@@ -6,6 +6,7 @@ import {
   Form as VeeForm,
   Field as VeeField,
 } from "vee-validate";
+// 引用驗證資料用的規則
 import { max, min, regex, required } from "@vee-validate/rules";
 
 export default {
@@ -15,13 +16,13 @@ export default {
     app.component("VeeField", VeeField);
     app.component("ErrorMessage", ErrorMessage);
 
-    // 引數一表示驗證規則的名稱，可自訂別名。引數二表示使用 @vee-validate/rules 套件中的那個驗證規則。
+    // 引數一表示驗證規則的名稱，可自訂別名。引數二表示使用 @vee-validate/rules 套件中的哪個驗證規則。
     // 規則一覽：https://vee-validate.logaretm.com/v4/guide/global-validators#vee-validaterules
     defineRule("regex", regex);
     defineRule("required", required);
     defineRule("max", max);
     defineRule("min", min);
-
+    // 自訂資料無法通過驗證時的提示訊息
     configure({
       generateMessage: (ctx) => {
         const messages = {

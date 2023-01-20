@@ -29,7 +29,7 @@ import SignInForm from "./components/SignInForm.vue";
 
 const auth = useAuthStore();
 const process = useProcessStore();
-
+// 使用者取得每日專屬打卡二維碼前，需將 IP 存入 user_ip。
 let user_ip = ref(null);
 
 // 配合 Navbar 及 main 標籤的 @mouseover.prevent，比對 JWT 效期與當下時間。若 JWT 效期已過，就將使用者登出系統。
@@ -38,11 +38,13 @@ function checkAuthExp() {
     auth.signOut("登入權杖過期，請重新登入。");
   }
 }
+// 取得使用者的 IP，避免在公司指定的地點以外打卡。
 function getUserIP() {
   fetch("https://api.ipify.org?format=json")
     .then((res) => res.json())
     .then(({ ip }) => {
       user_ip.value = ip;
+      // 使用者尚未取得打卡二維碼時才調用函式 show2dCode 取得二維碼
       if (!auth.twoDCode) {
         show2dCode();
       }
@@ -52,6 +54,7 @@ function getUserIP() {
       console.error(err);
     });
 }
+// 取得打卡二維碼
 function show2dCode() {
   if (!auth.twoDCode) {
     fetch(`${import.meta.env.VITE_BASE_URL}/api/employees/2d_code_auth`, {
@@ -61,6 +64,7 @@ function show2dCode() {
         Authorization: `Bearer ${auth.token}`,
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
+      // 傳送使用者 IP，讓後端驗證使用者是否使用公司認可的 IP 產生二維碼。
       body: `userIP=${user_ip.value}`,
     })
       .then((res) => {

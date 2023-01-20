@@ -28,7 +28,7 @@
             <RouterLink
               class="nav-link"
               to="2d-code"
-              @click.prevent="toggle2dCode"
+              @click.prevent="show2dCode"
               >取得打卡二維碼</RouterLink
             >
           </li>
@@ -69,7 +69,8 @@ const auth = useAuthStore();
 const process = useProcessStore();
 const emit = defineEmits(["emit-get-user-ip", "emit-sign-out"]);
 
-function toggle2dCode() {
+// 如果未曾載入打卡二維碼，就觸發 App.vue 當中取得二維碼的函式。
+function show2dCode() {
   if (auth.twoDCode === null) {
     process.loading2DCode = true;
     emit("emit-get-user-ip");

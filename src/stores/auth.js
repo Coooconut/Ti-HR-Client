@@ -16,12 +16,14 @@ export default defineStore("auth", {
     twoDCodeDemo: null,
   }),
   actions: {
+    // 使用者登入，用於 signInForm.vue。
     signIn(res) {
       toasterInfo.show(res.message);
       this.token = res.data.token;
       this.user = res.data.employee;
       this.authExp = res.data.authExp;
     },
+    // 使用者登出，用於 PageNavbar.vue。
     signOut(message) {
       if (this.token) {
         this.token = null;
