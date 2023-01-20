@@ -1,8 +1,11 @@
 <template>
   <!-- Page Navbar -->
-  <page-navbar @emit-get-user-ip="getUserIP"></page-navbar>
+  <page-navbar
+    @mouseover.prevent="checkAuthExp"
+    @emit-get-user-ip="getUserIP"
+  ></page-navbar>
   <!-- Main -->
-  <main>
+  <main @mouseover.prevent="checkAuthExp">
     <!-- Header -->
     <header v-if="auth.user !== null">
       <h4>{{ auth.user.fullName }}你好。今天也是個美好的一天。</h4>
@@ -17,6 +20,7 @@
 
 <script setup>
 import { ref } from "vue";
+import dayjs from "dayjs";
 import useAuthStore from "./stores/auth";
 import useProcessStore from "./stores/process";
 import WebSocket from "./components/WebSocket.vue";
@@ -28,6 +32,12 @@ const process = useProcessStore();
 
 let user_ip = ref(null);
 
+// 配合 Navbar 及 main 標籤的 @mouseover.prevent，比對 JWT 效期與當下時間。若 JWT 效期已過，就將使用者登出系統。
+function checkAuthExp() {
+  if (new Date(dayjs(auth.authExp).format()) < new Date()) {
+    auth.signOut("登入權杖過期，請重新登入。");
+  }
+}
 function getUserIP() {
   fetch("https://api.ipify.org?format=json")
     .then((res) => res.json())

@@ -1,10 +1,9 @@
 <template></template>
 
 <script setup>
-import { inject, ref } from "vue";
+import { inject } from "vue";
 
 const socket = inject("socket");
-let unreadCount = ref(0);
 
 // WebSocket 的功能目前尚未設計完畢，因此將下列代碼暫時設為註解。
 // socket.on("connect", () => {
