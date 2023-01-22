@@ -192,6 +192,8 @@
       </button>
     </div>
   </vee-form>
+  <!-- WebSocket -->
+  <web-socket />
 </template>
 
 <script setup>
@@ -201,6 +203,7 @@ import useAuthStore from "../stores/auth";
 import useFormStore from "../stores/form";
 import { createToaster } from "@meforma/vue-toaster";
 import dayjs from "dayjs";
+import WebSocket from "@/components/WebSocket.vue";
 
 const auth = useAuthStore();
 const form = useFormStore();

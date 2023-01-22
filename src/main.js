@@ -16,7 +16,7 @@ app.use(pinia);
 pinia.use(piniaPluginPersistedstate);
 app.use(router);
 app.use(SocketIo, {
-  connection: "http://localhost:3000",
+  connection: import.meta.env.VITE_PORT_IO,
 });
 app.use(VeeValidatePlugin);
 app.use(VueGoogleMaps, {
