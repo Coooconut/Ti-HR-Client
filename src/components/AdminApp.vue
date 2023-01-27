@@ -16,7 +16,7 @@
   </div>
   <!-- 出勤記錄表 -->
   <div id="punch-table">
-    <div class="punch-table" v-if="punchTable.data !== null">
+    <div class="punch-table" v-if="form.isOpenPunchTable === true">
       <button
         class="mx-5 btn btn-secondary position-absolute end-0"
         @click.prevent="closePunchTable"
@@ -70,8 +70,8 @@
         </tbody>
       </table>
     </div>
-    <!-- Pagination -->
-    <div class="container" v-if="punchTable.data !== null">
+    <!-- Punch Table Pagination -->
+    <div class="container" v-if="form.isOpenPunchTable === true">
       <paginate
         v-model="punchTable.page"
         :page-count="punchTable.page_sum"
@@ -85,7 +85,7 @@
   </div>
   <!-- 員工一覽表 -->
   <div id="employee-table">
-    <div class="employee-table" v-if="employeeTable.data !== null">
+    <div class="employee-table" v-if="form.isOpenEmployeeTable === true">
       <button
         class="mx-5 btn btn-secondary position-absolute end-0"
         @click.prevent="closeEmployeeTable"
@@ -127,8 +127,8 @@
         </tbody>
       </table>
     </div>
-    <!-- Pagination -->
-    <div class="container" v-if="employeeTable.data !== null">
+    <!-- Employee Table Pagination -->
+    <div class="container" v-if="form.isOpenEmployeeTable === true">
       <paginate
         v-model="employeeTable.page"
         :page-count="employeeTable.page_sum"
@@ -270,6 +270,8 @@ function postEmployee(values, { resetForm }) {
 }
 // 管理員可檢視員工一覽表
 function getEmployees() {
+  showEmployeeTableOnly();
+  form.isOpenEmployeeTable = true;
   employeeTable.page_current = employeeTable.page;
   fetch(
     `${import.meta.env.VITE_BASE_URL}/api/employees?` +
@@ -298,6 +300,8 @@ function getEmployees() {
 }
 // 管理員可檢視打卡記錄。option 由函式 punchesOption() 傳遞
 function getPunches(option) {
+  showPunchTableOnly();
+  form.isOpenPunchTable = true;
   punchTable.page_current = punchTable.page;
   fetch(
     `${import.meta.env.VITE_BASE_URL}/api/punches?` +
@@ -395,11 +399,11 @@ function resetCount(code, fullName) {
 }
 // 關閉員工名單
 function closeEmployeeTable() {
-  employeeTable.data = null;
+  form.isOpenEmployeeTable = false;
 }
 // 關閉出勤表單
 function closePunchTable() {
-  punchTable.data = null;
+  form.isOpenPunchTable = false;
   punchTable.option = "all";
 }
 // 傳遞查閱打卡記錄的條件
@@ -409,7 +413,35 @@ function punchesOption() {
 }
 // 開關新增員工帳號的表單
 function togglePostEmployeeForm() {
+  showPostEmployeeFormOnly();
   form.isOpenPostEmployeeForm = !form.isOpenPostEmployeeForm;
+}
+// 檢閱員工名單時，關閉其他已開啟的表單。在 getEmployees 函式當中調用此函式。
+function showEmployeeTableOnly() {
+  if (form.isOpenPostEmployeeForm) {
+    form.isOpenPostEmployeeForm = false;
+  }
+  if (form.isOpenPunchTable) {
+    form.isOpenPunchTable = false;
+  }
+}
+// 檢閱打卡記錄時，關閉其他已開啟的表單。在 getPunches 函式當中調用此函式。
+function showPunchTableOnly() {
+  if (form.isOpenEmployeeTable) {
+    form.isOpenEmployeeTable = false;
+  }
+  if (form.isOpenPostEmployeeForm) {
+    form.isOpenPostEmployeeForm = false;
+  }
+}
+// 新增員工帳號表單開啟時，關閉其他已開啟的表單。在 togglePostEmployeeForm 函式當中調用此函式。
+function showPostEmployeeFormOnly() {
+  if (form.isOpenEmployeeTable) {
+    form.isOpenEmployeeTable = false;
+  }
+  if (form.isOpenPunchTable) {
+    form.isOpenPunchTable = false;
+  }
 }
 </script>
 

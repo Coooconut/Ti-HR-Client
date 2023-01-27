@@ -160,6 +160,7 @@ const punchTable = reactive({
 });
 // 使用者可以查閱自己的打卡記錄。option 透過 punchesOption() 傳遞。
 function getMyPunches(option) {
+  showPunchTableOnly();
   punchTable.page_current = punchTable.page;
   fetch(
     `${import.meta.env.VITE_BASE_URL}/api/punches/${
@@ -227,11 +228,24 @@ function changPassword(values) {
 // 顯示或關閉更改密碼表單
 function toggleChangePasswordForm() {
   passwordForm.value = !passwordForm.value;
+  showChangePasswordFormOnly();
 }
 // 傳遞查閱打卡記錄的條件
 function punchesOption() {
   punchTable.option = event.target.value;
   getMyPunches(punchTable.option);
+}
+// 更改密碼申請表開啟時，關閉其他已開啟的表單。在 toggleChangePasswordForm 函式當中調用此函式。
+function showChangePasswordFormOnly() {
+  if (punchTable.data !== null) {
+    punchTable.data = null;
+  }
+}
+// 檢閱打卡記錄時，關閉其他已開啟的表單。在 getMyPunches 函式當中調用此函式。
+function showPunchTableOnly() {
+  if (passwordForm.value) {
+    passwordForm.value = false;
+  }
 }
 </script>
 
